@@ -20,7 +20,7 @@ namespace SM64DSe
             LevelObject.Type.FOG, 
             LevelObject.Type.DOOR, 
             LevelObject.Type.MINIMAP_SCALE, 
-            LevelObject.Type.STAR_CAMERA, 
+            LevelObject.Type.UNKNOWN_14, 
             LevelObject.Type.EXIT
         };
         public static readonly LevelObject.Type[] k_StandardLevelObjTypeOrder = new LevelObject.Type[] {
@@ -236,8 +236,8 @@ namespace SM64DSe
                             break;
 
                         case 14:
-                            // Star camera
-                            obj = new StarCameraObject(objData, m_LevelObjects.Count, layer, area);
+                            // ??? Unknown
+                            obj = new Type14Object(objData, m_LevelObjects.Count, layer, area);
                             break;
                         default:
                             throw new InvalidDataException("Bad object type: " + type);
@@ -466,10 +466,10 @@ namespace SM64DSe
             return obj;
         }
 
-        public StarCameraObject AddType14Object(int layer, int area)
+        public Type14Object AddType14Object(int layer, int area)
         {
-            StarCameraObject obj = new StarCameraObject(
-                InitialiseDataForObject(LevelObject.Type.STAR_CAMERA), (int)GetNextUniqueID(), layer, area);
+            Type14Object obj = new Type14Object(
+                InitialiseDataForObject(LevelObject.Type.UNKNOWN_14), (int)GetNextUniqueID(), layer, area);
             m_LevelObjects.Add(obj.m_UniqueID, obj);
             return obj;
         }

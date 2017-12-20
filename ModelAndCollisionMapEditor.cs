@@ -710,10 +710,10 @@ namespace SM64DSe
             chkModelMaterialFarClipping.Checked = false;
             chkModelMaterialShiniessTable.Checked = false;
 
-            btnModelMaterialDiffuse.ResetColourButtonValue();
-            btnModelMaterialAmbient.ResetColourButtonValue();
-            btnModelMaterialSpecular.ResetColourButtonValue();
-            btnModelMaterialEmission.ResetColourButtonValue();
+            ResetColourButtonValue(btnModelMaterialDiffuse);
+            ResetColourButtonValue(btnModelMaterialAmbient);
+            ResetColourButtonValue(btnModelMaterialSpecular);
+            ResetColourButtonValue(btnModelMaterialEmission);
             nudModelMaterialAlpha.Value = 0;
 
             cmbModelMaterialTextureID.SelectedIndex = -1;
@@ -760,10 +760,10 @@ namespace SM64DSe
             chkModelMaterialFarClipping.Checked = material.m_FarClipping;
             chkModelMaterialShiniessTable.Checked = material.m_ShininessTableEnabled;
 
-            btnModelMaterialDiffuse.Colour = material.m_Diffuse;
-            btnModelMaterialAmbient.Colour = material.m_Ambient;
-            btnModelMaterialSpecular.Colour = material.m_Specular;
-            btnModelMaterialEmission.Colour = material.m_Emission;
+            SetColourButtonValue(btnModelMaterialDiffuse, material.m_Diffuse);
+            SetColourButtonValue(btnModelMaterialAmbient, material.m_Ambient);
+            SetColourButtonValue(btnModelMaterialSpecular, material.m_Specular);
+            SetColourButtonValue(btnModelMaterialEmission, material.m_Emission);
             nudModelMaterialAlpha.Value = material.m_Alpha;
 
             bool hasTexture = (material.m_TextureDefID != null);
@@ -845,6 +845,29 @@ namespace SM64DSe
             btnModelMaterialApplySettings.Enabled = state;
         }
 
+        private void SetColourButtonValue(Button button, Color colour)
+        {
+            string hexColourString = Helper.GetHexColourString(colour);
+            button.Text = hexColourString;
+            button.BackColor = colour;
+            float luma = 0.2126f * colour.R + 0.7152f * colour.G + 0.0722f * colour.B;
+            if (luma < 50)
+            {
+                button.ForeColor = Color.White;
+            }
+            else
+            {
+                button.ForeColor = Color.Black;
+            }
+        }
+
+        private void ResetColourButtonValue(Button button)
+        {
+            button.Text = null;
+            button.BackColor = Color.Transparent;
+            button.ForeColor = Color.Black;
+        }
+
         private void PopulateTextureAndPaletteLists()
         {
             lbxModelTextures.Items.Clear();
@@ -874,7 +897,7 @@ namespace SM64DSe
 
             gridModelPalettesPaletteColours.ClearColours();
 
-            btnModelPalettesSelectedColour.ResetColourButtonValue();
+            ResetColourButtonValue(btnModelPalettesSelectedColour);
 
             SetEnabledStateModelTextureControls(false);
             SetEnabledStateModelPaletteControls(false);
@@ -972,22 +995,22 @@ namespace SM64DSe
 
         private void btnModelMaterialDiffuse_Click(object sender, EventArgs e)
         {
-            btnModelMaterialDiffuse.SelectColour();
+            GetColourDialogueResult(btnModelMaterialDiffuse);
         }
 
         private void btnModelMaterialAmbient_Click(object sender, EventArgs e)
         {
-            btnModelMaterialAmbient.SelectColour();
+            GetColourDialogueResult(btnModelMaterialAmbient);
         }
 
         private void btnModelMaterialSpecular_Click(object sender, EventArgs e)
         {
-            btnModelMaterialSpecular.SelectColour();
+            GetColourDialogueResult(btnModelMaterialSpecular);
         }
 
         private void btnModelMaterialEmission_Click(object sender, EventArgs e)
         {
-            btnModelMaterialEmission.SelectColour();
+            GetColourDialogueResult(btnModelMaterialEmission);
         }
 
         private void chkModelMaterialWireMode_CheckedChanged(object sender, EventArgs e)
@@ -1609,6 +1632,20 @@ namespace SM64DSe
             SetEnabledStateModelPaletteControls(true);
         }
 
+        private Color? GetColourDialogueResult(Button button)
+        {
+            ColorDialog colourDialogue = new ColorDialog();
+            DialogResult result = colourDialogue.ShowDialog(this);
+
+            if (result == DialogResult.OK)
+            {
+                Color colour = colourDialogue.Color;
+                SetColourButtonValue(button, colour);
+                return colour;
+            }
+            return null;
+        }
+
         private void lbxModelTextures_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lbxModelTextures.SelectedIndex < 0) return;
@@ -1857,11 +1894,12 @@ namespace SM64DSe
         {
             if (!gridModelPalettesPaletteColours.IsAColourSelected())
             {
-                btnModelPalettesSelectedColour.ResetColourButtonValue();
+                ResetColourButtonValue(btnModelPalettesSelectedColour);
                 return;
             }
 
-            btnModelPalettesSelectedColour.Colour = (Color)gridModelPalettesPaletteColours.GetSelectedColour();
+            Color colour = (Color)gridModelPalettesPaletteColours.GetSelectedColour();
+            SetColourButtonValue(btnModelPalettesSelectedColour, colour);
         }
 
         private void btnModelPalettesSelectedColour_Click(object sender, EventArgs e)
@@ -1870,8 +1908,8 @@ namespace SM64DSe
 
             string paletteID = GetSelectedPaletteID();
 
-            Color? selectedColour = btnModelPalettesSelectedColour.SelectColour();
-            if (!selectedColour.HasValue) return;
+            Color? selectedColour = GetColourDialogueResult(btnModelPalettesSelectedColour);
+            if (selectedColour == null) return;
 
             ushort colourBGR15 = Helper.ColorToBGR15((Color)selectedColour);
             int selectedColourIndex = gridModelPalettesPaletteColours.GetSelectedColourIndex();

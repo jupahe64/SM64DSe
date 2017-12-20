@@ -28,11 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RawEditorForm));
             this.valueInput = new System.Windows.Forms.NumericUpDown();
             this.panControls = new System.Windows.Forms.Panel();
             this.btnToogleBinary = new System.Windows.Forms.Button();
-            this.btnToggleHex = new System.Windows.Forms.Button();
+            this.btnToogleHex = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.valueInput)).BeginInit();
             this.panel1.SuspendLayout();
@@ -67,18 +66,18 @@
             // 
             // btnToogleHex
             // 
-            this.btnToggleHex.Location = new System.Drawing.Point(124, 2);
-            this.btnToggleHex.Name = "btnToogleHex";
-            this.btnToggleHex.Size = new System.Drawing.Size(37, 23);
-            this.btnToggleHex.TabIndex = 5;
-            this.btnToggleHex.Text = "Hex";
-            this.btnToggleHex.UseVisualStyleBackColor = true;
-            this.btnToggleHex.Click += new System.EventHandler(this.btnToggleHex_Click);
+            this.btnToogleHex.Location = new System.Drawing.Point(124, 2);
+            this.btnToogleHex.Name = "btnToogleHex";
+            this.btnToogleHex.Size = new System.Drawing.Size(37, 23);
+            this.btnToogleHex.TabIndex = 5;
+            this.btnToogleHex.Text = "Hex";
+            this.btnToogleHex.UseVisualStyleBackColor = true;
+            this.btnToogleHex.Click += new System.EventHandler(this.btnToogleHex_Click);
             // 
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.btnToggleHex);
+            this.panel1.Controls.Add(this.btnToogleHex);
             this.panel1.Controls.Add(this.valueInput);
             this.panel1.Location = new System.Drawing.Point(12, 9);
             this.panel1.Name = "panel1";
@@ -89,11 +88,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(352, 205);
+            this.ClientSize = new System.Drawing.Size(352, 204);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.btnToogleBinary);
             this.Controls.Add(this.panControls);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(368, 243);
             this.MinimizeBox = false;
@@ -111,7 +109,7 @@
         private System.Windows.Forms.NumericUpDown valueInput;
         private System.Windows.Forms.Panel panControls;
         private System.Windows.Forms.Button btnToogleBinary;
-        private System.Windows.Forms.Button btnToggleHex;
+        private System.Windows.Forms.Button btnToogleHex;
         private System.Windows.Forms.Panel panel1;
     }
 }

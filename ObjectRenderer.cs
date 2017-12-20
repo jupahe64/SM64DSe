@@ -366,14 +366,11 @@ namespace SM64DSe
 
     class ColorCubeRenderer : ObjectRenderer
     {
-        private float m_Scale;
-
-        public ColorCubeRenderer(Color border, Color fill, bool showaxes, float scale = 1.0f)
+        public ColorCubeRenderer(Color border, Color fill, bool showaxes)
         {
             m_BorderColor = border;
             m_FillColor = fill;
             m_ShowAxes = showaxes;
-            m_Scale = scale;
         }
 
         public override bool GottaRender(RenderMode mode)
@@ -392,8 +389,6 @@ namespace SM64DSe
                 GL.Color4(m_FillColor);
                 GL.Disable(EnableCap.Lighting);
             }
-
-            GL.Scale(m_Scale, m_Scale, m_Scale);
 
             GL.Begin(PrimitiveType.TriangleStrip);
             GL.Vertex3(-s, -s, -s);
@@ -1298,5 +1293,130 @@ namespace SM64DSe
             GL.Translate(m_OffsetSecond.X, m_OffsetSecond.Y, m_OffsetSecond.Z);
             m_SecondaryRenderer.Render(mode);
         }
+    }
+
+    class ColourArrowRenderer : ObjectRenderer
+    {
+        float rotX;
+        float rotY;
+        float rotZ;
+
+        public ColourArrowRenderer(Color border, Color fill, bool showaxes)
+        {
+            m_BorderColor = border;
+            m_FillColor = fill;
+            m_ShowAxes = showaxes;
+
+            rotX = 0.0f;
+            rotY = 0.0f;
+            rotZ = 0.0f;
+        }
+
+        public ColourArrowRenderer(Color border, Color fill, bool showaxes, float rotX = 0, float rotY = 0, float rotZ = 0)
+        {
+            m_BorderColor = border;
+            m_FillColor = fill;
+            m_ShowAxes = showaxes;
+
+            this.rotX = rotX;
+            this.rotY = rotY;
+            this.rotZ = rotZ;
+        }
+
+        public override bool GottaRender(RenderMode mode)
+        {
+            if (mode == RenderMode.Translucent) return false;
+            else return true;
+        }
+
+        public override void Render(RenderMode mode)
+        {
+            const float s = 0.04f;
+
+            if (mode != RenderMode.Picking)
+            {
+                GL.BindTexture(TextureTarget.Texture2D, 0);
+                GL.Color4(m_FillColor);
+                GL.Disable(EnableCap.Lighting);
+            }
+
+            GL.Rotate(rotX, Vector3d.UnitX);
+            GL.Rotate(rotY, Vector3d.UnitY);
+            GL.Rotate(rotZ, Vector3d.UnitZ);
+
+            GL.Begin(PrimitiveType.TriangleStrip);
+            GL.Vertex3(0, -s, -s * 1.5f);
+            GL.Vertex3(0, s, -s * 1.5f);
+            GL.Vertex3(s, -s, s);
+            GL.Vertex3(s, s, s);
+            GL.Vertex3(-s, -s, s);
+            GL.Vertex3(-s, s, s);
+            GL.Vertex3(0, -s, -s * 1.5f);
+            GL.Vertex3(0, s, -s * 1.5f);
+            GL.End();
+
+            GL.Begin(PrimitiveType.Triangles);
+            GL.Vertex3(0, s, -s * 1.5f);
+            GL.Vertex3(-s, s, s);
+            GL.Vertex3(s, s, s);
+            GL.End();
+
+            GL.Begin(PrimitiveType.Triangles);
+            GL.Vertex3(s, -s, s);
+            GL.Vertex3(-s, -s, s);
+            GL.Vertex3(0, -s, -s * 1.5f);
+            GL.End();
+
+            if (mode != RenderMode.Picking)
+            {
+                GL.LineWidth(3f);
+                GL.Color4(m_BorderColor);
+
+                GL.Begin(PrimitiveType.LineStrip);
+                GL.Vertex3(s, s, s);
+                GL.Vertex3(-s, s, s);
+                GL.Color3(0.0f, 1.0f, 0.0f);
+                GL.Vertex3(0, s, -s * 1.5f);
+                GL.Color4(m_BorderColor);
+                GL.Vertex3(s, s, s);
+                GL.Vertex3(s, -s, s);
+                GL.Vertex3(-s, -s, s);
+                GL.Color3(0.0f, 1.0f, 0.0f);
+                GL.Vertex3(0, -s, -s * 1.5f);
+                GL.Color4(m_BorderColor);
+                GL.Vertex3(s, -s, s);
+                GL.End();
+
+                GL.Begin(PrimitiveType.Lines);
+                GL.Vertex3(-s, s, s);
+                GL.Vertex3(-s, -s, s);
+                GL.Color3(0.0f, 1.0f, 0.0f);
+                GL.Vertex3(0, s, -s * 1.5f);
+                GL.Vertex3(0, -s, -s * 1.5f);
+                GL.Color4(m_BorderColor);
+                GL.End();
+
+                if (m_ShowAxes)
+                {
+                    GL.Begin(PrimitiveType.Lines);
+                    GL.Color3(1.0f, 0.0f, 0.0f);
+                    GL.Vertex3(0.0f, 0.0f, 0.0f);
+                    GL.Color3(1.0f, 0.0f, 0.0f);
+                    GL.Vertex3(s * 2.0f, 0.0f, 0.0f);
+                    GL.Color3(0.0f, 1.0f, 0.0f);
+                    GL.Vertex3(0.0f, 0.0f, 0.0f);
+                    GL.Color3(0.0f, 1.0f, 0.0f);
+                    GL.Vertex3(0.0f, s * 2.0f, 0.0f);
+                    GL.Color3(0.0f, 0.0f, 1.0f);
+                    GL.Vertex3(0.0f, 0.0f, 0.0f);
+                    GL.Color3(0.0f, 0.0f, 1.0f);
+                    GL.Vertex3(0.0f, 0.0f, s * 2.0f);
+                    GL.End();
+                }
+            }
+        }
+
+        private Color m_BorderColor, m_FillColor;
+        private bool m_ShowAxes;
     }
 }

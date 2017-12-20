@@ -133,7 +133,7 @@ namespace SM64DSe
             EXIT = 10, 
             MINIMAP_TILE_ID = 11, 
             MINIMAP_SCALE = 12, 
-            STAR_CAMERA = 14
+            UNKNOWN_14 = 14
         };
 
         public ushort ID;
@@ -192,6 +192,7 @@ namespace SM64DSe
 
             m_Renderer = InitialiseRenderer();
             m_KCLName = InitializeKCL();
+            m_ParameterFields = ParameterField.ParameterFieldsForObject(this);
             m_Properties = new PropertyTable();
             GenerateProperties();
         }
@@ -255,8 +256,6 @@ namespace SM64DSe
             m_Properties["Parameter 1"] = Parameters[0];
             m_Properties["Parameter 2"] = Parameters[1];
             m_Properties["Parameter 3"] = Parameters[2];
-
-            m_ParameterFields = ParameterField.ParameterFieldsForObject(this);
         }
 
         public override int SetProperty(string field, object newval)
@@ -341,6 +340,7 @@ namespace SM64DSe
 
             m_Renderer = InitialiseRenderer();
             m_KCLName = InitializeKCL();
+            m_ParameterFields = ParameterField.ParameterFieldsForObject(this);
             m_Properties = new PropertyTable();
             GenerateProperties();
         }
@@ -378,8 +378,6 @@ namespace SM64DSe
             m_Properties["Y position"] = Position.Y;
             m_Properties["Z position"] = Position.Z;
             m_Properties["Parameter 1"] = Parameters[0];
-
-            m_ParameterFields = ParameterField.ParameterFieldsForObject(this);
         }
         
         public override bool SupportsRotation() { return false; }
@@ -443,6 +441,29 @@ namespace SM64DSe
 
             m_Renderer = InitialiseRenderer();
             m_KCLName = InitializeKCL();
+            m_ParameterFields = new ParameterField[]
+            {
+                new ListField("Parameter 4",0,9,new object[]{
+                    0, "Spawns on ground standing.",
+                    1, "Wingcap Mario for ? Switch only, else falls and takes damage.",
+                    2, "Mario has Wingcap, other characters Spin in with Star wipe.",
+                    3, "Spin in with Circle wipe.",
+                    4, "Fall in, Star Wipe.",
+                    5, "Fall in, Star Wipe. (Duplicate?)",
+                    6, "Fall in, No Wipe.",
+                    7, "Fall in, No Wipe. (Duplicate?)",
+                    8, "Like jumping out of a pit/pipe, but lets you save.",
+                    9, "Like jumping out of a pit/pipe, but lets you save. (Duplicate?)",
+                    10, "Spin in, No Wipe.",
+                    11, "Acts like painting, makes sound, lets you save.",
+                    12, "Acts like painting, makes sound, lets you save. (Duplicate?)",
+                    13, "Jumps with fist in air, like coming out of a pipe.",
+                    14, "Spawns on ground standing (Castle Door Entrance).",
+                    15, "Fall in with Mario Wipe."
+                }) {Name = "EntranceMode" },
+                new DefaultField("Parameter 4",9,4){ Name = "ViewId", DislpayInHex = false },
+                new DefaultField("Parameter 4",13,3){ Name = "Area" },
+            };
             m_Properties = new PropertyTable(); 
             GenerateProperties();
         }
@@ -479,30 +500,6 @@ namespace SM64DSe
             m_Properties["Parameter 2"] = Parameters[1];
             m_Properties["Parameter 3"] = Parameters[2];
             m_Properties["Parameter 4"] = Parameters[3];
-
-            m_ParameterFields = new ParameterField[]
-            {
-                new ListField("Parameter 4",0,9,new object[]{
-                    0, "Spawns on ground standing.",
-                    1, "Wingcap Mario for ? Switch only, else falls and takes damage.",
-                    2, "Mario has Wingcap, other characters Spin in with Star wipe.",
-                    3, "Spin in with Circle wipe.",
-                    4, "Fall in, Star Wipe.",
-                    5, "Fall in, Star Wipe. (Duplicate?)",
-                    6, "Fall in, No Wipe.",
-                    7, "Fall in, No Wipe. (Duplicate?)",
-                    8, "Like jumping out of a pit/pipe, but lets you save.",
-                    9, "Like jumping out of a pit/pipe, but lets you save. (Duplicate?)",
-                    10, "Spin in, No Wipe.",
-                    11, "Acts like painting, makes sound, lets you save.",
-                    12, "Acts like painting, makes sound, lets you save. (Duplicate?)",
-                    13, "Jumps with fist in air, like coming out of a pipe.",
-                    14, "Spawns on ground standing (Castle Door Entrance).",
-                    15, "Fall in with Mario Wipe."
-                }) {Name = "EntranceMode" },
-                new DefaultField("Parameter 4",9,4){ Name = "ViewId", DislpayInHex = false },
-                new DefaultField("Parameter 4",13,3){ Name = "Area" },
-            };
         }
 
         public override int SetProperty(string field, object newval)
@@ -562,6 +559,15 @@ namespace SM64DSe
             m_Renderer = InitialiseRenderer();
             m_KCLName = InitializeKCL();
             m_Properties = new PropertyTable();
+            m_ParameterFields = new ParameterField[]
+            {
+                new ListField("Destination level",8,8,ComboBoxInfoFromStrings(Strings.LevelNames)){Name = "Destination level"},
+                new DefaultField("Destination entrance",8,8){ Name = "Destination entrance", Description = "The Entrance you spawn at in the level", DislpayInHex = false },
+                new FloatConvertField("Parameter 1",0,16,0x1000,22.5f){ Name = "X Rotation"},
+                new DefaultField("Parameter 2",4,4){ Name = "width", Description = "The width of the exits trigger area", DislpayInHex = false },
+                new DefaultField("Parameter 2",0,4){ Name = "height", Description = "The height of the exits trigger area", DislpayInHex = false },
+                new DefaultField("Parameter 2",8,8){ Name = "returnEntrance", Description = "The Entrance you spawn at, if you die or collect a star/key, 255 means you spawn at the default Entrance in Peachs Castle", DislpayInHex = false }
+            };
             GenerateProperties();
         }
 
@@ -586,10 +592,10 @@ namespace SM64DSe
             m_Properties.Properties.Add(new PropertySpec("Y position", typeof(float), "General", "The exit's position along the Y axis.", Position.Y, "", typeof(FloatTypeConverter)));
             m_Properties.Properties.Add(new PropertySpec("Z position", typeof(float), "General", "The exit's position along the Z axis.", Position.Z, "", typeof(FloatTypeConverter)));
             m_Properties.Properties.Add(new PropertySpec("Y rotation", typeof(float), "General", "The angle in degrees the exit is rotated around the Y axis.", YRotation, "", typeof(FloatTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("Destination Level", typeof(int), "Specific", "The level the exit leads to.", LevelID, "", typeof(LevelIDTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("Destination Entrance", typeof(int), "Specific", "The ID of the entrance in the destination level, the exit is connected to.", EntranceID));
-            m_Properties.Properties.Add(new PropertySpec("Width", typeof(byte), "Specific", "The width of the exit trigger area", width, "", typeof(Size16TypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("Height", typeof(byte), "Specific", "The height of the exit trigger area", height, "", typeof(Size16TypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Destination level", typeof(int), "Specific", "The level the exit leads to.", LevelID, "", typeof(LevelIDTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Destination entrance", typeof(int), "Specific", "The ID of the entrance in the destination level, the exit is connected to.", EntranceID));
+            m_Properties.Properties.Add(new PropertySpec("width", typeof(byte), "Specific", "The width of the exit trigger area", width, "", typeof(Size16TypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("height", typeof(byte), "Specific", "The height of the exit trigger area", height, "", typeof(Size16TypeConverter)));
             m_Properties.Properties.Add(new PropertySpec("Parameter 1", typeof(ushort), "Specific(raw)", "Purpose unknown.", Param1, "", typeof(HexNumberTypeConverter)));
             m_Properties.Properties.Add(new PropertySpec("Parameter 2", typeof(ushort), "Specific(raw)", "Purpose unknown.", Param2, "", typeof(HexNumberTypeConverter)));
 
@@ -598,20 +604,10 @@ namespace SM64DSe
             m_Properties["Y position"] = Position.Y;
             m_Properties["Z position"] = Position.Z;
             m_Properties["Y rotation"] = YRotation;
-            m_Properties["Destination Level"] = LevelID;
-            m_Properties["Destination Entrance"] = EntranceID;
+            m_Properties["Destination level"] = LevelID;
+            m_Properties["Destination entrance"] = EntranceID;
             m_Properties["Parameter 1"] = Param1;
             m_Properties["Parameter 2"] = Param2;
-
-            m_ParameterFields = new ParameterField[]
-            {
-                new ListField("Destination Level",8,8,ComboBoxInfoFromStrings(Strings.LevelNames)){Name = "Destination Level"},
-                new DefaultField("Destination Entrance",8,8){ Name = "Destination Entrance", Description = "The Entrance you spawn at in the level", DislpayInHex = false },
-                new FloatConvertField("Parameter 1",0,16,0x1000,22.5f){ Name = "X Rotation"},
-                new DefaultField("Parameter 2",4,4){ Name = "Width", Description = "The width of the exits trigger area", DislpayInHex = false },
-                new DefaultField("Parameter 2",0,4){ Name = "Height", Description = "The height of the exits trigger area", DislpayInHex = false },
-                new DefaultField("Parameter 2",8,8){ Name = "Return Entrance", Description = "The Entrance you spawn at, if you die or collect a star/key, 255 means you spawn at the default Entrance in Peachs Castle", DislpayInHex = false }
-            };
         }
 
         public override int SetProperty(string field, object newval)
@@ -622,11 +618,11 @@ namespace SM64DSe
                 case "Y position": Position.Y = (float)newval; return 1;
                 case "Z position": Position.Z = (float)newval; return 1;
                 case "Y rotation": YRotation = (float)newval; return 1;
-                case "Destination Level":
+                case "Destination level":
                     if (newval is string) LevelID = int.Parse(((string)newval).Substring(0, ((string)newval).IndexOf(" - ")));
                     else LevelID = (int)newval; 
                     return 4;
-                case "Destination Entrance": EntranceID = (int)newval; return 4;
+                case "Destination entrance": EntranceID = (int)newval; return 4;
                 case "Parameter 1":
                     Param1 = (ushort)newval;
                     m_Renderer.Release();
@@ -686,6 +682,14 @@ namespace SM64DSe
 
             m_Renderer = InitialiseRenderer();
             m_KCLName = InitializeKCL();
+            m_ParameterFields = new ParameterField[]
+            {
+                new ListField("Door type",8,8, ComboBoxInfoFromStrings(Strings.DoorTypes)){Name = "DoorType"},
+                new DefaultField("Inside area",13,3){Name = "Inside area", Description = "The area that gets loaded, if you enter from the front side"},
+                new DefaultField("Outside area",13,3){Name = "Outside area", Description = "The area that gets loaded, if you enter from the back side"},
+                new DefaultField("Plane width",12,4){Name = "Plane width", Description = "The width of the plane (only for Virtual doors)", DislpayInHex = false},
+                new DefaultField("Plane height",12,4){Name = "Plane height", Description = "The height of the plane (only for Virtual doors)", DislpayInHex = false}
+            };
             m_Properties = new PropertyTable(); 
             GenerateProperties();
         }
@@ -725,15 +729,6 @@ namespace SM64DSe
             m_Properties["Inside area"] = InAreaID;
             m_Properties["Plane width"] = PlaneSizeX;
             m_Properties["Plane height"] = PlaneSizeY;
-
-            m_ParameterFields = new ParameterField[]
-            {
-                new ListField("Door type",8,8, ComboBoxInfoFromStrings(Strings.DoorTypes)){Name = "DoorType"},
-                new DefaultField("Inside area",13,3){Name = "Inside area", Description = "The area that gets loaded, if you enter from the front side"},
-                new DefaultField("Outside area",13,3){Name = "Outside area", Description = "The area that gets loaded, if you enter from the back side"},
-                new DefaultField("Plane width",12,4){Name = "Plane width", Description = "The width of the plane (only for Virtual doors)", DislpayInHex = false},
-                new DefaultField("Plane height",12,4){Name = "Plane height", Description = "The height of the plane (only for Virtual doors)", DislpayInHex = false}
-            };
         }
 
         public override int SetProperty(string field, object newval)
@@ -810,7 +805,7 @@ namespace SM64DSe
 
         public override ObjectRenderer BuildRenderer()
         {
-            return new ColorCubeRenderer(Color.FromArgb(0, 165, 255), Color.FromArgb(0, 255, 255), false, 0.5f);
+            return new ColourArrowRenderer(Color.FromArgb(0, 255, 255), Color.FromArgb(0, 64, 64), false);
         }
 
         public override string GetDescription()
@@ -870,6 +865,14 @@ namespace SM64DSe
             Parameters[3] = (ushort)data.Read8 (0x4);
             Parameters[4] = (ushort)data.Read8 (0x5);
 
+            m_ParameterFields = new ParameterField[]
+            {
+                //new DefaultField("Start Node",0,16){Name = "startNode", Description = "The index of the first node in this Path", DislpayInHex = false},
+                //new DefaultField("Length",8,8){Name = "pathLength", Description = "How many nodes are in this Path", DislpayInHex = false},
+                new DefaultField("Parameter 3",8,8){Name = "1. Parameter"},
+                new DefaultField("Parameter 4",8,8){Name = "2. Parameter", Description = "1 to 3 are different speeds for wind/quicksand/water/conveyorBelt paths?"},
+                new DefaultField("Parameter 5",8,8){Name = "3. Parameter", Description = "FF means path is closed, everything else is Unkown"}
+            };
             m_Properties = new PropertyTable();
             GenerateProperties();
         }
@@ -885,24 +888,15 @@ namespace SM64DSe
 
             //m_Properties.Properties.Add(new PropertySpec("Start Node", typeof(float), "General", "Index of starting node.", (float)Parameters[0], "", typeof(FloatTypeConverter)));
             //m_Properties.Properties.Add(new PropertySpec("Length", typeof(float), "General", "Number of nodes in path.", (float)Parameters[1], "", typeof(FloatTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("Parameter 3", typeof(ushort), "General", "Unknown", (float)Parameters[2], "", typeof(FloatTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("Parameter 4", typeof(ushort), "General", "Unknown", (float)Parameters[3], "", typeof(FloatTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("Parameter 5", typeof(ushort), "General", "Unknown", (float)Parameters[4], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Parameter 3", typeof(float), "General", "Unknown", (float)Parameters[2], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Parameter 4", typeof(float), "General", "Unknown", (float)Parameters[3], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Parameter 5", typeof(float), "General", "Unknown", (float)Parameters[4], "", typeof(FloatTypeConverter)));
 
             //m_Properties["Start Node"] = (float)Parameters[0];
             //m_Properties["Length"] = (float)Parameters[1];
-            m_Properties["Parameter 3"] = (ushort)Parameters[2];
-            m_Properties["Parameter 4"] = (ushort)Parameters[3];
-            m_Properties["Parameter 5"] = (ushort)Parameters[4];
-
-            m_ParameterFields = new ParameterField[]
-            {
-                //new DefaultField("Start Node",0,16){Name = "startNode", Description = "The index of the first node in this Path", DislpayInHex = false},
-                //new DefaultField("Length",8,8){Name = "pathLength", Description = "How many nodes are in this Path", DislpayInHex = false},
-                new DefaultField("Parameter 3",8,8){Name = "1. Parameter"},
-                new DefaultField("Parameter 4",8,8){Name = "2. Parameter", Description = "1 to 3 are different speeds for wind/quicksand/water/conveyorBelt paths?"},
-                new DefaultField("Parameter 5",8,8){Name = "3. Parameter", Description = "FF means path is closed, everything else is Unkown"}
-            };
+            m_Properties["Parameter 3"] = (float)Parameters[2];
+            m_Properties["Parameter 4"] = (float)Parameters[3];
+            m_Properties["Parameter 5"] = (float)Parameters[4];
         }
 
         public override bool SupportsRotation() { return false; }
@@ -913,11 +907,11 @@ namespace SM64DSe
         {
             switch (field)
             {
-                case "Start Node": Parameters[0] = (ushort)newval; break;
-                case "Length": Parameters[1] = (ushort)newval; break;
-                case "Parameter 3": Parameters[2] = (ushort)newval; break;
-                case "Parameter 4": Parameters[3] = (ushort)newval; break;
-                case "Parameter 5": Parameters[4] = (ushort)newval; break;
+                case "Start Node": Parameters[0] = (ushort)(float)newval; break;
+                case "Length": Parameters[1] = (ushort)(float)newval; break;
+                case "Parameter 3": Parameters[2] = (ushort)(float)newval; break;
+                case "Parameter 4": Parameters[3] = (ushort)(float)newval; break;
+                case "Parameter 5": Parameters[4] = (ushort)(float)newval; break;
             }
 
             return 0;
@@ -959,6 +953,20 @@ namespace SM64DSe
 
             m_Renderer = InitialiseRenderer();
             m_KCLName = InitializeKCL();
+            m_ParameterFields = new ParameterField[]
+            {
+                new ListField("Parameter 1",8,8,new object[]{
+                    0,"Outside cylinder",
+                    1,"Inside cylinder",
+                    2,"Normal camera",
+                    3,"Point for MultiFocus camera",
+                    4,"RotationOnly camera",
+                    5,"Spiraling stairs?",
+                    6,"PathFollowing camera",
+                    7,"PauseCamera CenterPoint"
+                }) {Name = "ViewMode" },
+                new DefaultField("Parameter 1",0,8) {Name = "View Parameter"}
+            };
             m_Properties = new PropertyTable(); 
             GenerateProperties();
         }
@@ -993,21 +1001,6 @@ namespace SM64DSe
             m_Properties["Parameter 1"] = Parameters[0];
             m_Properties["Parameter 2"] = Parameters[1];
             m_Properties["Parameter 3"] = Parameters[2];
-
-            m_ParameterFields = new ParameterField[]
-            {
-                new ListField("Parameter 1",8,8,new object[]{
-                    0,"Outside Cylinder",
-                    1,"Inside Cylinder",
-                    2,"Normal Camera",
-                    3,"Point for Multi-Focus Camera",
-                    4,"Rotation-Only Camera",
-                    5,"Spiralling Stairs?",
-                    6,"Path-Following Camera",
-                    7,"Pause Camera Center-Point"
-                }) {Name = "View Mode" },
-                new DefaultField("Parameter 1",0,8) {Name = "View Parameter"}
-            };
         }
 
         public override int SetProperty(string field, object newval)
@@ -1058,6 +1051,11 @@ namespace SM64DSe
 
             m_Renderer = InitialiseRenderer();
             m_KCLName = InitializeKCL();
+            m_ParameterFields = new ParameterField[]
+            {
+                new DefaultField("Parameter 2",4,8){Name = "Destination", DislpayInHex = false},
+                new DefaultField("Parameter 1",0,16)
+            };
             m_Properties = new PropertyTable();
             GenerateProperties();
         }
@@ -1087,12 +1085,6 @@ namespace SM64DSe
             m_Properties["Z position"] = Position.Z;
             m_Properties["Parameter 1"] = Parameters[0];
             m_Properties["Parameter 2"] = Parameters[1];
-
-            m_ParameterFields = new ParameterField[]
-            {
-                new DefaultField("Parameter 2",4,8){Name = "Destination", DislpayInHex = false},
-                new DefaultField("Parameter 1",0,16)
-            };
         }
 
         public override int SetProperty(string field, object newval)
@@ -1138,6 +1130,10 @@ namespace SM64DSe
 
             m_Renderer = InitialiseRenderer();
             m_KCLName = InitializeKCL();
+            m_ParameterFields = new ParameterField[]
+            {
+                new DefaultField("Parameter",0,16)
+            };
             m_Properties = new PropertyTable();
             GenerateProperties();
         }
@@ -1165,11 +1161,6 @@ namespace SM64DSe
             m_Properties["Y position"] = Position.Y;
             m_Properties["Z position"] = Position.Z;
             m_Properties["Parameter"] = Parameters[0];
-
-            m_ParameterFields = new ParameterField[]
-            {
-                new DefaultField("Parameter",0,16)
-            };
         }
 
         public override int SetProperty(string field, object newval)
@@ -1206,6 +1197,10 @@ namespace SM64DSe
 
             Parameters = new ushort[1];
             Parameters[0] = data.Read16(0);
+            m_ParameterFields = new ParameterField[]
+            {
+                new FloatField("Scale")
+            };
 
             m_Properties = new PropertyTable();
             GenerateProperties();
@@ -1223,11 +1218,6 @@ namespace SM64DSe
             m_Properties.Properties.Add(new PropertySpec("Scale", typeof(float), "Specific", "Scale of minimap.", (float)(Parameters[0] / 1000f), "", typeof(FloatTypeConverter)));
 
             m_Properties["Scale"] = (float)(Parameters[0] / 1000f);
-
-            m_ParameterFields = new ParameterField[]
-            {
-                new FloatField("Scale")
-            };
         }
 
         public override bool SupportsRotation() { return false; }
@@ -1284,17 +1274,17 @@ namespace SM64DSe
         {
             m_Properties.Properties.Clear();
 
-            m_Properties.Properties.Add(new PropertySpec("Density", typeof(ushort), "Specific", "Density of fog. 0 - No fog, 1 - Show Fog", (float)Parameters[0], "", typeof(FloatTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("RGB R Value", typeof(ushort), "Specific", "RGB Red value for fog colour.", (float)Parameters[1], "", typeof(FloatTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("RGB G Value", typeof(ushort), "Specific", "RGB Green value for fog colour.", (float)Parameters[2], "", typeof(FloatTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("RGB B Value", typeof(ushort), "Specific", "RGB Blue value for fog colour.", (float)Parameters[3], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Density", typeof(float), "Specific", "Density of fog. 0 - No fog, 1 - Show Fog", (float)Parameters[0], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("RGB R Value", typeof(float), "Specific", "RGB Red value for fog colour.", (float)Parameters[1], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("RGB G Value", typeof(float), "Specific", "RGB Green value for fog colour.", (float)Parameters[2], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("RGB B Value", typeof(float), "Specific", "RGB Blue value for fog colour.", (float)Parameters[3], "", typeof(FloatTypeConverter)));
             m_Properties.Properties.Add(new PropertySpec("Start Distance", typeof(float), "Specific", "Distance at which to start drawing fog.", (float)(Parameters[4] / 1000), "", typeof(FloatTypeConverter)));
             m_Properties.Properties.Add(new PropertySpec("End Distance", typeof(float), "Specific", "Distance at which to stop drawing fog.", (float)(Parameters[5] / 1000), "", typeof(FloatTypeConverter)));
 
-            m_Properties["Density"] = (ushort)Parameters[0];
-            m_Properties["RGB R Value"] = (ushort)Parameters[1];
-            m_Properties["RGB G Value"] = (ushort)Parameters[2];
-            m_Properties["RGB B Value"] = (ushort)Parameters[3];
+            m_Properties["Density"] = (float)Parameters[0];
+            m_Properties["RGB R Value"] = (float)Parameters[1];
+            m_Properties["RGB G Value"] = (float)Parameters[2];
+            m_Properties["RGB B Value"] = (float)Parameters[3];
             m_Properties["Start Distance"] = (float)(Parameters[4] / 1000);
             m_Properties["End Distance"] = (float)(Parameters[5] / 1000);
         }
@@ -1307,10 +1297,10 @@ namespace SM64DSe
         {
             switch (field)
             {
-                case "Density": Parameters[0] = (ushort)newval; break;
-                case "RGB R Value": Parameters[1] = (ushort)newval; break;
-                case "RGB G Value": Parameters[2] = (ushort)newval; break;
-                case "RGB B Value": Parameters[3] = (ushort)newval; break;
+                case "Density": Parameters[0] = (ushort)(float)newval; break;
+                case "RGB R Value": Parameters[1] = (ushort)(float)newval; break;
+                case "RGB G Value": Parameters[2] = (ushort)(float)newval; break;
+                case "RGB B Value": Parameters[3] = (ushort)(float)newval; break;
                 case "Start Distance": Parameters[4] = (ushort)((float)newval * 1000f); break;
                 case "End Distance": Parameters[5] = (ushort)((float)newval * 1000f); break;
             }
@@ -1332,32 +1322,13 @@ namespace SM64DSe
         public override void Release() { }
     }
 
-    public class StarCameraObject : LevelObject
+    public class Type14Object : LevelObject
     {
-        protected static readonly object[] CAMERA_MODES = new object[]{
-                0, "Zoom in when the player thrusts the star in the air.",
-                1, "Rotate to face FF07 view and zoom out.",
-                2, "Stand Still.",
-                3, "Spin around.",
-                4, "Stand Still. Used for castle and 100-coin stars.",
-                5, "Zooms in, then spins around crazily.",
-                6, "Freezes Game.",
-                7, "Freezes Game.",
-                8, "Freezes Game.",
-                9, "Player collects star but wipe freezes game.",
-                10, "0 but without zooming.",
-                11, "Freezes Game.",
-                12, "Cuts to FF07 camera???",
-                13, "Same as 10. (DUPLICATE?)",
-                14, "Same as 10. (DUPLICATE?)",
-                15, "Same as 10. (DUPLICATE?)"
-            };
-
-        public StarCameraObject(INitroROMBlock data, int num, int layer, int area)
+        public Type14Object(INitroROMBlock data, int num, int layer, int area)
             : base(data, layer)
         {
             m_Area = area;
-            m_Type = Type.STAR_CAMERA;
+            m_Type = Type.UNKNOWN_14;
             m_UniqueID = (uint)(0x50000000 | num);
 
             Parameters = new ushort[4];
@@ -1366,40 +1337,58 @@ namespace SM64DSe
             Parameters[2] = data.Read8(2);
             Parameters[3] = data.Read8(3);
 
+            object[] cameraModes = new object[]{
+                0, "Zoom in when the player thrusts the star in the air.",
+                1, "Rotate to face FF07 view and zoom out.",
+                2, "Stand Still.",
+                3, "Spin around.",
+                4, "Stand Still. Used for castle and 100 coin stars.",
+                5, "Zooms in, then spins around crazily.",
+                6, "Freeze Game.",
+                7, "Freeze Game.",
+                8, "Freeze Game.",
+                9, "Player collects star, but wipe freezes game.",
+                10, "0, but without zooming.",
+                11, "Freezes Game.",
+                12, "Cuts to FF07 camera???",
+                13, "Same as 10. (DUPLICATE?)",
+                14, "Same as 10. (DUPLICATE?)",
+                15, "Same as 10. (DUPLICATE?)"
+            };
+
+            m_ParameterFields = new ParameterField[]
+            {
+                new ListField("Parameter 1", 12, 4, cameraModes) {Name = "100coins" },
+                new ListField("Parameter 1", 8, 4, cameraModes) {Name = "1. Star" },
+                new ListField("Parameter 2", 12, 4, cameraModes) {Name = "2. Star" },
+                new ListField("Parameter 2", 8, 4, cameraModes) {Name = "3. Star" },
+                new ListField("Parameter 3", 12, 4, cameraModes) {Name = "4. Star" },
+                new ListField("Parameter 3", 8, 4, cameraModes) {Name = "5. Star" },
+                new ListField("Parameter 4", 12, 4, cameraModes) {Name = "6. Star" },
+                new ListField("Parameter 4", 8, 4, cameraModes) {Name = "7. Star" }
+            };
             m_Properties = new PropertyTable();
             GenerateProperties();
         }
 
         public override string GetDescription()
         {
-            return "Star Camera";
+            return "Star Cameras";
         }
 
         public override void GenerateProperties()
         {
             m_Properties.Properties.Clear();
 
-            m_Properties.Properties.Add(new PropertySpec("Parameter 1", typeof(ushort), "Specific", "It's a mystery...", (float)Parameters[0], "", typeof(FloatTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("Parameter 2", typeof(ushort), "Specific", "It's a mystery...", (float)Parameters[1], "", typeof(FloatTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("Parameter 3", typeof(ushort), "Specific", "It's a mystery...", (float)Parameters[2], "", typeof(FloatTypeConverter)));
-            m_Properties.Properties.Add(new PropertySpec("Parameter 4", typeof(ushort), "Specific", "It's a mystery...", (float)Parameters[3], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Parameter 1", typeof(float), "Specific", "It's a mystery...", (float)Parameters[0], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Parameter 2", typeof(float), "Specific", "It's a mystery...", (float)Parameters[1], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Parameter 3", typeof(float), "Specific", "It's a mystery...", (float)Parameters[2], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Parameter 4", typeof(float), "Specific", "It's a mystery...", (float)Parameters[3], "", typeof(FloatTypeConverter)));
 
-            m_Properties["Parameter 1"] = (ushort)Parameters[0];
-            m_Properties["Parameter 2"] = (ushort)Parameters[1];
-            m_Properties["Parameter 3"] = (ushort)Parameters[2];
-            m_Properties["Parameter 4"] = (ushort)Parameters[3];
-
-            m_ParameterFields = new ParameterField[]
-            {
-                new ListField("Parameter 1", 12, 4, CAMERA_MODES) {Name = "100 Coins" },
-                new ListField("Parameter 1", 8, 4, CAMERA_MODES) {Name = "Star 1" },
-                new ListField("Parameter 2", 12, 4, CAMERA_MODES) {Name = "Star 2" },
-                new ListField("Parameter 2", 8, 4, CAMERA_MODES) {Name = "Star 3" },
-                new ListField("Parameter 3", 12, 4, CAMERA_MODES) {Name = "Star 4" },
-                new ListField("Parameter 3", 8, 4, CAMERA_MODES) {Name = "Star 5" },
-                new ListField("Parameter 4", 12, 4, CAMERA_MODES) {Name = "Star 6" },
-                new ListField("Parameter 4", 8, 4, CAMERA_MODES) {Name = "Star 7" }
-            };
+            m_Properties["Parameter 1"] = (float)Parameters[0];
+            m_Properties["Parameter 2"] = (float)Parameters[1];
+            m_Properties["Parameter 3"] = (float)Parameters[2];
+            m_Properties["Parameter 4"] = (float)Parameters[3];
         }
 
         public override bool SupportsRotation() { return false; }
@@ -1410,10 +1399,10 @@ namespace SM64DSe
         {
             switch (field)
             {
-                case "Parameter 1": Parameters[0] = (ushort)newval; break;
-                case "Parameter 2": Parameters[1] = (ushort)newval; break;
-                case "Parameter 3": Parameters[2] = (ushort)newval; break;
-                case "Parameter 4": Parameters[3] = (ushort)newval; break;
+                case "Parameter 1": Parameters[0] = (ushort)(float)newval; break;
+                case "Parameter 2": Parameters[1] = (ushort)(float)newval; break;
+                case "Parameter 3": Parameters[2] = (ushort)(float)newval; break;
+                case "Parameter 4": Parameters[3] = (ushort)(float)newval; break;
             }
 
             return 0;
@@ -1445,6 +1434,11 @@ namespace SM64DSe
             Parameters = new ushort[2];
             Parameters[0] = data.Read16(0);
 
+            m_ParameterFields = new ParameterField[]
+            {
+                new DefaultField("Tile ID",0,16){Name = "Tile ID", DislpayInHex = false}
+            };
+
             m_Properties = new PropertyTable();
             GenerateProperties();
         }
@@ -1458,14 +1452,9 @@ namespace SM64DSe
         {
             m_Properties.Properties.Clear();
 
-            m_Properties.Properties.Add(new PropertySpec("Tile ID", typeof(ushort), "Specific", "ID of minimap tile to use in area " + m_MinimapTileIDNum, (float)Parameters[0], "", typeof(FloatTypeConverter)));
+            m_Properties.Properties.Add(new PropertySpec("Tile ID", typeof(float), "Specific", "ID of minimap tile to use in area " + m_MinimapTileIDNum, (float)Parameters[0], "", typeof(FloatTypeConverter)));
 
-            m_Properties["Tile ID"] = (ushort)Parameters[0];
-
-            m_ParameterFields = new ParameterField[]
-            {
-                new DefaultField("Tile ID",0,16){Name = "Tile ID", DislpayInHex = false}
-            };
+            m_Properties["Tile ID"] = (float)Parameters[0];
         }
 
         public override bool SupportsRotation() { return false; }
@@ -1476,7 +1465,7 @@ namespace SM64DSe
         {
             switch (field)
             {
-                case "Tile ID": Parameters[0] = (ushort)newval; break;
+                case "Tile ID": Parameters[0] = (ushort)(float)newval; break;
             }
 
             return 0;
@@ -1745,12 +1734,12 @@ namespace SM64DSe
                         new ListField("Parameter 1",8,8,new object[]{
                             0,"Coin",
                             1,"Power Star",
-                            2,"1-Up Mushroom",
-                            3,"Green Koopa Shell",
+                            2,"1 Up Mushroom",
+                            3,"Greenshell",
                             4,"Super Mushroom",
-                            5,"Feather (Mario), Power Flower (Other)",
+                            5,"Feather(Mario), Power Flower(Other)",
                             6,"Power Flower",
-                            7,"Lit Bob-omb (Mario), Power Flower (Other)"
+                            7,"Lit Bob-omb(Mario), PowerFlower(Other)"
                         }){ Name = "Content" },
                         new DefaultField("Parameter 1",0,8){ Name = "Parameter" }
                     };
@@ -1771,13 +1760,13 @@ namespace SM64DSe
                     return new ParameterField[] {
                         new ListField("Parameter 1",12,4,new object[]{
                             0,"100 Coins",
-                            1,"Star 1",
-                            2,"Star 2",
-                            3,"Star 3",
-                            4,"Star 4",
-                            5,"Star 5",
-                            6,"Star 6",
-                            7,"Star 7"
+                            1,"1. Star",
+                            2,"2. Star",
+                            3,"3. Star",
+                            4,"4. Star",
+                            5,"5. Star",
+                            6,"6. Star",
+                            7,"7. Star"
                         }){ Name = "Star" },
                         new ListField("Parameter 1",8,4,new object[]{
                             0,"Normal",
@@ -1785,8 +1774,8 @@ namespace SM64DSe
                             2,"100-Coin Star",
                             3,"VS-Star",
                             4,"Just spawned?",
-                            5,"Uncollectable when already collected?",
-                            6,"Silver Star Star Marker",
+                            5,"Incollectable when already collected?",
+                            6,"Silver-Star Star",
                             7,"Minimap only"
                         }){ Name = "Type" }
                     };
@@ -1794,44 +1783,22 @@ namespace SM64DSe
                     return new ParameterField[] {
                         new ListField("Parameter 1",12,4,new object[]{
                             0,"100 Coins",
-                            1,"Star 1",
-                            2,"Star 2",
-                            3,"Star 3",
-                            4,"Star 4",
-                            5,"Star 5",
-                            6,"Star 6",
-                            7,"Star 7"
+                            1,"1. Star",
+                            2,"2. Star",
+                            3,"3. Star",
+                            4,"4. Star",
+                            5,"5. Star",
+                            6,"6. Star",
+                            7,"7. Star"
                         }){ Name = "Star" },
                         new ListField("Parameter 1",8,4,new object[]{
                             0,"Red Coin Shadow Star",
                             1,"VS-Star Container",
-                            2,"Default Star Spawner",
-                            4,"Star Sphere (No Function?)",
-                            6,"Switch Star",
+                            2,"Default StarSpawner",
+                            4,"StarSphere(No Function?)",
+                            6,"SwitchStar",
                             10,"Same as 2?"
                         }){ Name = "Type" }
-                    };
-                case 15: //Goomba
-                    return new ParameterField[] {
-                        new ListField("Parameter 1",4,4,new object[]{
-                            0,"Never",
-                            1,"Only if Player is unlocked",
-                            2,"Always",
-                            15,"Never"
-                        }){ Name = "Show Cap" },
-                        new ListField("Parameter 1",8,4,new object[]{
-                            0,"Nothing",
-                            1,"Silver Star",
-                            2,"Nothing",
-                            15,"Nothing"
-                        }){ Name = "Spawns" },
-                        new ListField("Parameter 1",12,4,new object[]{
-                            15,"None",
-                            1,"For Mario",
-                            2,"For Luigi",
-                            3,"For Wario",
-                            15,"None"
-                        }){ Name = "Wears Cap" }
                     };
                 default:
                     return new ParameterField[] { };

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace SM64DSe.FormControls
 {
-    public class ModelGLControl : SelectionHighlightGLControl
+    public class ModelGLControl : OpenTK.GLControl
     {
         // camera
         protected Vector2 m_CamRotation;
@@ -37,7 +37,8 @@ namespace SM64DSe.FormControls
 
         protected bool m_Initialised;
 
-        public ModelGLControl() : base()
+        public ModelGLControl()
+            : base(new OpenTK.Graphics.GraphicsMode(new OpenTK.Graphics.ColorFormat(32), 24, 8))
         {
             this.BackColor = System.Drawing.Color.Black;
             this.Dock = System.Windows.Forms.DockStyle.Fill;

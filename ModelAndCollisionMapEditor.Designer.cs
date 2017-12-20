@@ -1,5 +1,4 @@
-﻿using SM64DSe.FormControls;
-namespace SM64DSe
+﻿namespace SM64DSe
 {
     partial class ModelAndCollisionMapEditor
     {
@@ -104,15 +103,15 @@ namespace SM64DSe
             this.chkModelMaterialTextureEnabled = new System.Windows.Forms.CheckBox();
             this.lblModelMaterialTexture = new System.Windows.Forms.Label();
             this.grpModelMaterialColours = new System.Windows.Forms.GroupBox();
-            this.btnModelMaterialEmission = new ColourPickerButton();
+            this.btnModelMaterialEmission = new System.Windows.Forms.Button();
             this.lblModelMaterialEmission = new System.Windows.Forms.Label();
-            this.btnModelMaterialSpecular = new ColourPickerButton();
+            this.btnModelMaterialSpecular = new System.Windows.Forms.Button();
             this.lblModelMaterialSpecular = new System.Windows.Forms.Label();
             this.nudModelMaterialAlpha = new System.Windows.Forms.NumericUpDown();
-            this.btnModelMaterialAmbient = new ColourPickerButton();
+            this.btnModelMaterialAmbient = new System.Windows.Forms.Button();
             this.lblModelMaterialAlpha = new System.Windows.Forms.Label();
             this.lblModelMaterialAmbient = new System.Windows.Forms.Label();
-            this.btnModelMaterialDiffuse = new ColourPickerButton();
+            this.btnModelMaterialDiffuse = new System.Windows.Forms.Button();
             this.lblModelMaterialDiffuse = new System.Windows.Forms.Label();
             this.grpModelMaterialFlags = new System.Windows.Forms.GroupBox();
             this.chkModelMaterialShiniessTable = new System.Windows.Forms.CheckBox();
@@ -155,7 +154,7 @@ namespace SM64DSe
             this.tpgPalettes = new System.Windows.Forms.TabPage();
             this.grpModelPalettesColours = new System.Windows.Forms.GroupBox();
             this.gridModelPalettesPaletteColours = new SM64DSe.PaletteColourGrid();
-            this.btnModelPalettesSelectedColour = new ColourPickerButton();
+            this.btnModelPalettesSelectedColour = new System.Windows.Forms.Button();
             this.lblModelPalettesPaletteSelectedColour = new System.Windows.Forms.Label();
             this.lbxModelPalettes = new System.Windows.Forms.ListBox();
             this.btnModelPalettesRenamePalette = new System.Windows.Forms.Button();
@@ -1631,6 +1630,8 @@ namespace SM64DSe
             this.btnModelPalettesSelectedColour.Name = "btnModelPalettesSelectedColour";
             this.btnModelPalettesSelectedColour.Size = new System.Drawing.Size(75, 23);
             this.btnModelPalettesSelectedColour.TabIndex = 9;
+            this.btnModelPalettesSelectedColour.Text = "#XXXXXX";
+            this.btnModelPalettesSelectedColour.UseVisualStyleBackColor = true;
             this.btnModelPalettesSelectedColour.Click += new System.EventHandler(this.btnModelPalettesSelectedColour_Click);
             // 
             // lblModelPalettesPaletteSelectedColour
@@ -2429,12 +2430,12 @@ namespace SM64DSe
         private System.Windows.Forms.CheckBox chkModelMaterialFarClipping;
         private System.Windows.Forms.GroupBox grpModelMaterialColours;
         private System.Windows.Forms.Label lblModelMaterialDiffuse;
-        private ColourPickerButton btnModelMaterialDiffuse;
-        private ColourPickerButton btnModelMaterialEmission;
+        private System.Windows.Forms.Button btnModelMaterialDiffuse;
+        private System.Windows.Forms.Button btnModelMaterialEmission;
         private System.Windows.Forms.Label lblModelMaterialEmission;
-        private ColourPickerButton btnModelMaterialSpecular;
+        private System.Windows.Forms.Button btnModelMaterialSpecular;
         private System.Windows.Forms.Label lblModelMaterialSpecular;
-        private ColourPickerButton btnModelMaterialAmbient;
+        private System.Windows.Forms.Button btnModelMaterialAmbient;
         private System.Windows.Forms.Label lblModelMaterialAmbient;
         private System.Windows.Forms.GroupBox grpModelMaterialTextureSettings;
         private System.Windows.Forms.CheckBox chkModelMaterialTextureEnabled;
@@ -2534,7 +2535,7 @@ namespace SM64DSe
         private System.Windows.Forms.ComboBox cmbModelBonesPolylistMaterial;
         private System.Windows.Forms.TabPage tpgPalettes;
         private System.Windows.Forms.Label lblModelPalettesPaletteSelectedColour;
-        private ColourPickerButton btnModelPalettesSelectedColour;
+        private System.Windows.Forms.Button btnModelPalettesSelectedColour;
         private System.Windows.Forms.ListBox lbxModelPalettes;
         private PaletteColourGrid gridModelPalettesPaletteColours;
         private System.Windows.Forms.Button btnModelPalettesRenamePalette;

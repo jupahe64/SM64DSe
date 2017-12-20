@@ -194,8 +194,8 @@ namespace SM64DSe.ImportExport.LevelImportExport
                     case (LevelObject.Type.MINIMAP_SCALE):
                         WriteMinimapScaleObjectToXML(writer, (MinimapScaleObject)obj);
                         break;
-                    case (LevelObject.Type.STAR_CAMERA):
-                        WriteType14ObjectToXML(writer, (StarCameraObject)obj);
+                    case (LevelObject.Type.UNKNOWN_14):
+                        WriteType14ObjectToXML(writer, (Type14Object)obj);
                         break;
                     default:
                         break;
@@ -469,7 +469,7 @@ namespace SM64DSe.ImportExport.LevelImportExport
             writer.WriteEndElement();
         }
 
-        protected virtual void WriteType14ObjectToXML(XmlWriter writer, StarCameraObject obj)
+        protected virtual void WriteType14ObjectToXML(XmlWriter writer, Type14Object obj)
         {
             writer.WriteStartElement("Type14Object");
 

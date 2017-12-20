@@ -11,9 +11,9 @@ namespace SM64DSe
 {
     public partial class ROMFileSelect : Form
     {
-        public string m_SelectedFile = "";
+        public String m_SelectedFile = "";
 
-        private string[] m_FileFilters;
+        private String[] m_fileFilters;
 
         public ROMFileSelect()
         {
@@ -21,27 +21,24 @@ namespace SM64DSe
             LoadFileList(this.tvFiles);
         }
 
-        public ROMFileSelect(string title, string[] filters = null)
+        public ROMFileSelect(String title, String[] filters = null)
         {
             InitializeComponent();
-            ReInitialize(title, filters);
+            this.Text = title;
+
+            LoadFileList(this.tvFiles,filters);
         }
 
-        public void ReInitialize(string title, string[] filters = null)
+        public void ReInitialize(String title, String[] filters = null)
         {
             this.Text = title;
-            this.m_FileFilters = filters;
-
-            bool filtered = (filters != null || filters.Length > 0);
-            this.chkBoxFilterByExtension.Enabled = this.chkBoxFilterByExtension.Checked = filtered;
-            this.lblFilterExtension.Text = (filtered) ? String.Join(", ", filters) : null;
+            this.tvFiles.Nodes.Clear();
             LoadFileList(this.tvFiles, filters);
         }
 
-        public static void LoadFileList(TreeView tvFileList, string[] filters = null)
+        public static void LoadFileList(TreeView tvFileList, String[] filters = null)
         {
             NitroROM.FileEntry[] files = Program.m_ROM.GetFileEntries();
-            tvFileList.Nodes.Clear();
             TreeNode node = tvFileList.Nodes.Add("root", "ROM File System");
 
             EnsureAllDirsExist(tvFileList); //just in case a directory doesn't have files
@@ -58,19 +55,19 @@ namespace SM64DSe
                 EnsureDirExists(dirs[i].FullName, dirs[i].FullName, tvFileList.Nodes["root"]);
         }
 
-        private static void LoadFiles(TreeView tvFileList, TreeNode node, NitroROM.FileEntry[] files, NARC.FileEntry[] filesNARC, string[] filters = null)
+        private static void LoadFiles(TreeView tvFileList, TreeNode node, NitroROM.FileEntry[] files, NARC.FileEntry[] filesNARC, String[] filters = null)
         {
             TreeNode parent = node;
-            string[] names = new string[0];
+            String[] names = new String[0];
             if (files.Length == 0)
             {
-                names = new string[filesNARC.Length];
+                names = new String[filesNARC.Length];
                 for (int i = 0; i < filesNARC.Length; i++)
                     names[i] = filesNARC[i].FullName;
             }
             else if (filesNARC.Length == 0)
             {
-                names = new string[files.Length];
+                names = new String[files.Length];
                 for (int i = 0; i < files.Length; i++)
                     names[i] = files[i].FullName;
             }
@@ -80,7 +77,7 @@ namespace SM64DSe
                 if (filters != null)
                 {
                     bool passedFilters = false;
-                    foreach (string filter in filters)
+                    foreach (String filter in filters)
                     {
                         if (names[i].EndsWith(filter))
                         {
@@ -92,7 +89,7 @@ namespace SM64DSe
                         continue;
                 }
                 
-                string[] parts = names[i].Split('/');
+                String[] parts = names[i].Split('/');
 
                 if (parts.Length == 1)
                 {
@@ -137,7 +134,7 @@ namespace SM64DSe
             NitroROM.OverlayEntry[] ovls = Program.m_ROM.GetOverlayEntries();
             for (int i = 0; i < ovls.Length; i++)
             {
-                string ind = string.Format("{0:D3}", i);
+                string ind = String.Format("{0:D3}", i);
                 ovlNode.Nodes.Add("Overlay_" + ind).Tag = "Overlay_" + ind;
             }
 
@@ -225,20 +222,6 @@ namespace SM64DSe
         private void btnOK_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        private void chkBoxFilterByExtension_CheckedChanged(object sender, EventArgs e)
-        {
-            if (m_FileFilters == null || m_FileFilters.Length < 1) return;
-
-            if (chkBoxFilterByExtension.Checked)
-            {
-                LoadFileList(tvFiles, m_FileFilters);
-            }
-            else
-            {
-                LoadFileList(tvFiles, null);
-            }
         }
     }
 }

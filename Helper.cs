@@ -149,12 +149,12 @@ namespace SM64DSe
             return snapPos + control.Width;
         }
 
-        public static int snapControlVertically(Control control, int snapPos, int paddingTop = 0, int paddingBottom = 0)
+        public static int snapControlVertically(Control control, int snapPos, int padding = 0)
         {
             int newX = control.Location.X;
-            int newY = snapPos + paddingTop;
+            int newY = snapPos+padding;
             control.Location = new Point(newX, newY);
-            return snapPos + control.Height + paddingBottom;
+            return snapPos + control.Height;
         }
 
         public static Matrix4 SRTToMatrix(Vector3 scale, Vector3 rot, Vector3 trans)
