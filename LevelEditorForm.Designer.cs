@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics;
+using SM64DSe.FormControls;
 namespace SM64DSe
 {
     partial class LevelEditorForm
@@ -34,45 +35,41 @@ namespace SM64DSe
             this.spcLeftPanel = new System.Windows.Forms.SplitContainer();
             this.tvObjectList = new System.Windows.Forms.TreeView();
             this.spcPropertyInterface = new System.Windows.Forms.SplitContainer();
-            this.box_general = new System.Windows.Forms.GroupBox();
-            this.btnOpenObjectList = new System.Windows.Forms.Button();
-            this.val_act = new System.Windows.Forms.ComboBox();
-            this.btnToogleCollapseGeneral = new System.Windows.Forms.PictureBox();
-            this.val_objectId = new System.Windows.Forms.NumericUpDown();
-            this.lbl_objectId = new System.Windows.Forms.Label();
-            this.lbl_star = new System.Windows.Forms.Label();
-            this.val_area = new System.Windows.Forms.NumericUpDown();
-            this.lbl_area = new System.Windows.Forms.Label();
+            this.pnlPropertyPanel = new System.Windows.Forms.Panel();
             this.box_fogSettings = new System.Windows.Forms.GroupBox();
-            this.box_color = new System.Windows.Forms.Panel();
-            this.lbl_r = new System.Windows.Forms.Label();
-            this.val_r = new System.Windows.Forms.NumericUpDown();
-            this.lbl_g = new System.Windows.Forms.Label();
-            this.val_b = new System.Windows.Forms.NumericUpDown();
-            this.lbl_b = new System.Windows.Forms.Label();
-            this.val_g = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnFogColour = new SM64DSe.FormControls.ColourPickerButton();
             this.check_displayFog = new System.Windows.Forms.CheckBox();
             this.val_endDistance = new System.Windows.Forms.NumericUpDown();
             this.lbl_endDistance = new System.Windows.Forms.Label();
             this.val_startDistance = new System.Windows.Forms.NumericUpDown();
             this.lbl_startDistance = new System.Windows.Forms.Label();
-            this.btnToogleCollapseColor = new System.Windows.Forms.PictureBox();
+            this.btnToggleCollapseFog = new CollapseExpandButton();
             this.box_parameters = new System.Windows.Forms.GroupBox();
-            this.btnToogleCollapseParameters = new System.Windows.Forms.PictureBox();
+            this.btnToggleCollapseParameters = new CollapseExpandButton();
             this.box_rotation = new System.Windows.Forms.GroupBox();
-            this.btnToogleCollapseRotation = new System.Windows.Forms.PictureBox();
+            this.btnToggleCollapseRotation = new CollapseExpandButton();
             this.val_rotY = new System.Windows.Forms.NumericUpDown();
             this.val_rotX = new System.Windows.Forms.NumericUpDown();
             this.lbl_rotY = new System.Windows.Forms.Label();
             this.lbl_rotX = new System.Windows.Forms.Label();
             this.box_position = new System.Windows.Forms.GroupBox();
-            this.btnToogleCollapsePosition = new System.Windows.Forms.PictureBox();
+            this.btnToggleCollapsePosition = new CollapseExpandButton();
             this.val_posZ = new System.Windows.Forms.NumericUpDown();
             this.val_posY = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.lbl_posY = new System.Windows.Forms.Label();
             this.val_posX = new System.Windows.Forms.NumericUpDown();
             this.lbl_posX = new System.Windows.Forms.Label();
+            this.box_general = new System.Windows.Forms.GroupBox();
+            this.btnOpenObjectList = new System.Windows.Forms.Button();
+            this.val_act = new System.Windows.Forms.ComboBox();
+            this.btnToggleCollapseGeneral = new CollapseExpandButton();
+            this.val_objectId = new System.Windows.Forms.NumericUpDown();
+            this.lblPropertiesGeneralArea = new System.Windows.Forms.Label();
+            this.lblPropertiesGeneralStar = new System.Windows.Forms.Label();
+            this.val_area = new System.Windows.Forms.NumericUpDown();
+            this.lblPropertiesGeneralObjectID = new System.Windows.Forms.Label();
             this.btnPasteCoordinates = new System.Windows.Forms.Button();
             this.btnCopyCoordinates = new System.Windows.Forms.Button();
             this.tsEditActions = new System.Windows.Forms.ToolStrip();
@@ -101,14 +98,11 @@ namespace SM64DSe
             this.btnExportOtherModel = new System.Windows.Forms.ToolStripButton();
             this.btnOffsetAllCoords = new System.Windows.Forms.ToolStripButton();
             this.btnAddPathNode = new System.Windows.Forms.ToolStripButton();
-            this.glLevelView = new OpenTK.GLControl();
+            this.glLevelView = new SM64DSe.FormControls.SelectionHighlightGLControl();
             this.tsViewActions = new System.Windows.Forms.ToolStrip();
-            this.btnLOL = new System.Windows.Forms.ToolStripButton();
             this.btnImportXML = new System.Windows.Forms.ToolStripButton();
             this.btnExportXML = new System.Windows.Forms.ToolStripButton();
-            this.btnScreenshot = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnOrthView = new System.Windows.Forms.ToolStripButton();
             this.menuGridSettings = new System.Windows.Forms.ToolStripDropDownButton();
             this.txtGridSizeX = new System.Windows.Forms.ToolStripTextBox();
             this.txtGridSizeY = new System.Windows.Forms.ToolStripTextBox();
@@ -125,7 +119,10 @@ namespace SM64DSe
             this.txtRstPlaneOffX = new System.Windows.Forms.ToolStripTextBox();
             this.txtRstPlaneOffY = new System.Windows.Forms.ToolStripTextBox();
             this.txtRstPlaneOffZ = new System.Windows.Forms.ToolStripTextBox();
+            this.btnScreenshot = new System.Windows.Forms.ToolStripButton();
+            this.btnOpenDisplayOptions = new System.Windows.Forms.ToolStripButton();
             this.btnMakeOverlay = new System.Windows.Forms.ToolStripButton();
+            this.btnOrthView = new System.Windows.Forms.ToolStripButton();
             this.tsToolBar = new System.Windows.Forms.ToolStrip();
             this.btnSave = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -165,29 +162,26 @@ namespace SM64DSe
             this.spcPropertyInterface.Panel1.SuspendLayout();
             this.spcPropertyInterface.Panel2.SuspendLayout();
             this.spcPropertyInterface.SuspendLayout();
-            this.box_general.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.btnToogleCollapseGeneral)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.val_objectId)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.val_area)).BeginInit();
+            this.pnlPropertyPanel.SuspendLayout();
             this.box_fogSettings.SuspendLayout();
-            this.box_color.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.val_r)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.val_b)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.val_g)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_endDistance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_startDistance)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.btnToogleCollapseColor)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnToggleCollapseFog)).BeginInit();
             this.box_parameters.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.btnToogleCollapseParameters)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnToggleCollapseParameters)).BeginInit();
             this.box_rotation.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.btnToogleCollapseRotation)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnToggleCollapseRotation)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_rotY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_rotX)).BeginInit();
             this.box_position.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.btnToogleCollapsePosition)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnToggleCollapsePosition)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_posZ)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_posY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_posX)).BeginInit();
+            this.box_general.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.btnToggleCollapseGeneral)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.val_objectId)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.val_area)).BeginInit();
             this.tsEditActions.SuspendLayout();
             this.tsViewActions.SuspendLayout();
             this.tsToolBar.SuspendLayout();
@@ -196,9 +190,9 @@ namespace SM64DSe
             // 
             // spcMainContainer
             // 
-            this.spcMainContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.spcMainContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.spcMainContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.spcMainContainer.Location = new System.Drawing.Point(0, 25);
             this.spcMainContainer.Margin = new System.Windows.Forms.Padding(0);
@@ -259,12 +253,7 @@ namespace SM64DSe
             // 
             // spcPropertyInterface.Panel1
             // 
-            this.spcPropertyInterface.Panel1.AutoScroll = true;
-            this.spcPropertyInterface.Panel1.Controls.Add(this.box_position);
-            this.spcPropertyInterface.Panel1.Controls.Add(this.box_rotation);
-            this.spcPropertyInterface.Panel1.Controls.Add(this.box_parameters);
-            this.spcPropertyInterface.Panel1.Controls.Add(this.box_fogSettings);
-            this.spcPropertyInterface.Panel1.Controls.Add(this.box_general);
+            this.spcPropertyInterface.Panel1.Controls.Add(this.pnlPropertyPanel);
             // 
             // spcPropertyInterface.Panel2
             // 
@@ -274,240 +263,79 @@ namespace SM64DSe
             this.spcPropertyInterface.SplitterDistance = 245;
             this.spcPropertyInterface.TabIndex = 1;
             // 
-            // box_general
+            // pnlPropertyPanel
             // 
-            this.box_general.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.box_general.Controls.Add(this.btnOpenObjectList);
-            this.box_general.Controls.Add(this.val_act);
-            this.box_general.Controls.Add(this.btnToogleCollapseGeneral);
-            this.box_general.Controls.Add(this.val_objectId);
-            this.box_general.Controls.Add(this.lbl_objectId);
-            this.box_general.Controls.Add(this.lbl_star);
-            this.box_general.Controls.Add(this.val_area);
-            this.box_general.Controls.Add(this.lbl_area);
-            this.box_general.Cursor = System.Windows.Forms.Cursors.Default;
-            this.box_general.Location = new System.Drawing.Point(3, -18);
-            this.box_general.Name = "box_general";
-            this.box_general.Size = new System.Drawing.Size(266, 68);
-            this.box_general.TabIndex = 10;
-            this.box_general.TabStop = false;
-            this.box_general.Text = "General";
-            this.box_general.Visible = false;
-            // 
-            // btnOpenObjectList
-            // 
-            this.btnOpenObjectList.Location = new System.Drawing.Point(140, 45);
-            this.btnOpenObjectList.Name = "btnOpenObjectList";
-            this.btnOpenObjectList.Size = new System.Drawing.Size(75, 23);
-            this.btnOpenObjectList.TabIndex = 11;
-            this.btnOpenObjectList.Text = "ObjectList";
-            this.btnOpenObjectList.UseVisualStyleBackColor = true;
-            this.btnOpenObjectList.Click += new System.EventHandler(this.btnOpenObjectList_Click);
-            // 
-            // val_act
-            // 
-            this.val_act.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.val_act.FormattingEnabled = true;
-            this.val_act.Items.AddRange(new object[] {
-            "All",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7"});
-            this.val_act.Location = new System.Drawing.Point(76, 20);
-            this.val_act.Name = "val_act";
-            this.val_act.Size = new System.Drawing.Size(58, 21);
-            this.val_act.TabIndex = 10;
-            this.val_act.SelectedValueChanged += new System.EventHandler(this.ValueChanged);
-            // 
-            // btnToogleCollapseGeneral
-            // 
-            this.btnToogleCollapseGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToogleCollapseGeneral.Image = global::SM64DSe.Properties.Resources.collapseButton;
-            this.btnToogleCollapseGeneral.Location = new System.Drawing.Point(250, 0);
-            this.btnToogleCollapseGeneral.Name = "btnToogleCollapseGeneral";
-            this.btnToogleCollapseGeneral.Size = new System.Drawing.Size(16, 16);
-            this.btnToogleCollapseGeneral.TabIndex = 9;
-            this.btnToogleCollapseGeneral.TabStop = false;
-            this.btnToogleCollapseGeneral.Click += new System.EventHandler(this.btnToogleCollapseGeneral_Click);
-            // 
-            // val_objectId
-            // 
-            this.val_objectId.Location = new System.Drawing.Point(76, 47);
-            this.val_objectId.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
-            this.val_objectId.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.val_objectId.Name = "val_objectId";
-            this.val_objectId.Size = new System.Drawing.Size(58, 20);
-            this.val_objectId.TabIndex = 5;
-            this.val_objectId.ValueChanged += new System.EventHandler(this.ValueChanged);
-            // 
-            // lbl_objectId
-            // 
-            this.lbl_objectId.AutoSize = true;
-            this.lbl_objectId.Location = new System.Drawing.Point(147, 22);
-            this.lbl_objectId.Name = "lbl_objectId";
-            this.lbl_objectId.Size = new System.Drawing.Size(29, 13);
-            this.lbl_objectId.TabIndex = 4;
-            this.lbl_objectId.Text = "Area";
-            // 
-            // lbl_star
-            // 
-            this.lbl_star.AutoSize = true;
-            this.lbl_star.Location = new System.Drawing.Point(7, 21);
-            this.lbl_star.Name = "lbl_star";
-            this.lbl_star.Size = new System.Drawing.Size(47, 13);
-            this.lbl_star.TabIndex = 3;
-            this.lbl_star.Text = "Star/Act";
-            // 
-            // val_area
-            // 
-            this.val_area.Location = new System.Drawing.Point(180, 20);
-            this.val_area.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
-            this.val_area.Maximum = new decimal(new int[] {
-            7,
-            0,
-            0,
-            0});
-            this.val_area.Name = "val_area";
-            this.val_area.Size = new System.Drawing.Size(58, 20);
-            this.val_area.TabIndex = 3;
-            this.val_area.ValueChanged += new System.EventHandler(this.ValueChanged);
-            // 
-            // lbl_area
-            // 
-            this.lbl_area.AutoSize = true;
-            this.lbl_area.Location = new System.Drawing.Point(7, 49);
-            this.lbl_area.Name = "lbl_area";
-            this.lbl_area.Size = new System.Drawing.Size(65, 13);
-            this.lbl_area.TabIndex = 2;
-            this.lbl_area.Text = "Object Type";
+            this.pnlPropertyPanel.AutoScroll = true;
+            this.pnlPropertyPanel.Controls.Add(this.box_fogSettings);
+            this.pnlPropertyPanel.Controls.Add(this.box_parameters);
+            this.pnlPropertyPanel.Controls.Add(this.box_rotation);
+            this.pnlPropertyPanel.Controls.Add(this.box_position);
+            this.pnlPropertyPanel.Controls.Add(this.box_general);
+            this.pnlPropertyPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlPropertyPanel.Location = new System.Drawing.Point(0, 0);
+            this.pnlPropertyPanel.Name = "pnlPropertyPanel";
+            this.pnlPropertyPanel.Size = new System.Drawing.Size(289, 245);
+            this.pnlPropertyPanel.TabIndex = 2;
             // 
             // box_fogSettings
             // 
-            this.box_fogSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.box_fogSettings.Controls.Add(this.box_color);
+            this.box_fogSettings.Controls.Add(this.label1);
+            this.box_fogSettings.Controls.Add(this.btnFogColour);
             this.box_fogSettings.Controls.Add(this.check_displayFog);
             this.box_fogSettings.Controls.Add(this.val_endDistance);
             this.box_fogSettings.Controls.Add(this.lbl_endDistance);
             this.box_fogSettings.Controls.Add(this.val_startDistance);
             this.box_fogSettings.Controls.Add(this.lbl_startDistance);
-            this.box_fogSettings.Controls.Add(this.btnToogleCollapseColor);
+            this.box_fogSettings.Controls.Add(this.btnToggleCollapseFog);
             this.box_fogSettings.Cursor = System.Windows.Forms.Cursors.Default;
-            this.box_fogSettings.Location = new System.Drawing.Point(3, 266);
+            this.box_fogSettings.Location = new System.Drawing.Point(3, 308);
+            this.box_fogSettings.MinimumSize = new System.Drawing.Size(267, 0);
             this.box_fogSettings.Name = "box_fogSettings";
-            this.box_fogSettings.Size = new System.Drawing.Size(266, 132);
-            this.box_fogSettings.TabIndex = 6;
+            this.box_fogSettings.Size = new System.Drawing.Size(267, 126);
+            this.box_fogSettings.TabIndex = 14;
             this.box_fogSettings.TabStop = false;
             this.box_fogSettings.Text = "Fog Settings";
             this.box_fogSettings.Visible = false;
             // 
-            // box_color
+            // label1
             // 
-            this.box_color.Controls.Add(this.lbl_r);
-            this.box_color.Controls.Add(this.val_r);
-            this.box_color.Controls.Add(this.lbl_g);
-            this.box_color.Controls.Add(this.val_b);
-            this.box_color.Controls.Add(this.lbl_b);
-            this.box_color.Controls.Add(this.val_g);
-            this.box_color.Location = new System.Drawing.Point(0, 37);
-            this.box_color.Name = "box_color";
-            this.box_color.Size = new System.Drawing.Size(242, 34);
-            this.box_color.TabIndex = 16;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 48);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(61, 13);
+            this.label1.TabIndex = 23;
+            this.label1.Text = "Fog Colour:";
             // 
-            // lbl_r
+            // btnFogColour
             // 
-            this.lbl_r.AutoSize = true;
-            this.lbl_r.Location = new System.Drawing.Point(3, 10);
-            this.lbl_r.Name = "lbl_r";
-            this.lbl_r.Size = new System.Drawing.Size(13, 13);
-            this.lbl_r.TabIndex = 2;
-            this.lbl_r.Text = "r:";
-            // 
-            // val_r
-            // 
-            this.val_r.Location = new System.Drawing.Point(20, 8);
-            this.val_r.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
-            this.val_r.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.val_r.Name = "val_r";
-            this.val_r.Size = new System.Drawing.Size(58, 20);
-            this.val_r.TabIndex = 3;
-            this.val_r.ValueChanged += new System.EventHandler(this.ValueChanged);
-            // 
-            // lbl_g
-            // 
-            this.lbl_g.AutoSize = true;
-            this.lbl_g.Location = new System.Drawing.Point(84, 10);
-            this.lbl_g.Name = "lbl_g";
-            this.lbl_g.Size = new System.Drawing.Size(16, 13);
-            this.lbl_g.TabIndex = 3;
-            this.lbl_g.Text = "g:";
-            // 
-            // val_b
-            // 
-            this.val_b.Location = new System.Drawing.Point(180, 8);
-            this.val_b.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
-            this.val_b.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.val_b.Name = "val_b";
-            this.val_b.Size = new System.Drawing.Size(58, 20);
-            this.val_b.TabIndex = 5;
-            this.val_b.ValueChanged += new System.EventHandler(this.ValueChanged);
-            // 
-            // lbl_b
-            // 
-            this.lbl_b.AutoSize = true;
-            this.lbl_b.Location = new System.Drawing.Point(160, 10);
-            this.lbl_b.Name = "lbl_b";
-            this.lbl_b.Size = new System.Drawing.Size(16, 13);
-            this.lbl_b.TabIndex = 4;
-            this.lbl_b.Text = "b:";
-            // 
-            // val_g
-            // 
-            this.val_g.Location = new System.Drawing.Point(102, 8);
-            this.val_g.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
-            this.val_g.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.val_g.Name = "val_g";
-            this.val_g.Size = new System.Drawing.Size(52, 20);
-            this.val_g.TabIndex = 4;
-            this.val_g.ValueChanged += new System.EventHandler(this.ValueChanged);
+            this.btnFogColour.BackColor = System.Drawing.Color.Transparent;
+            this.btnFogColour.Colour = null;
+            this.btnFogColour.ForeColor = System.Drawing.Color.Black;
+            this.btnFogColour.Location = new System.Drawing.Point(88, 43);
+            this.btnFogColour.Name = "btnFogColour";
+            this.btnFogColour.Size = new System.Drawing.Size(77, 23);
+            this.btnFogColour.TabIndex = 22;
+            this.btnFogColour.Text = "#XXXXXX";
+            this.btnFogColour.UseVisualStyleBackColor = true;
+            this.btnFogColour.Click += new System.EventHandler(this.btnFogColour_Click);
             // 
             // check_displayFog
             // 
             this.check_displayFog.AutoSize = true;
             this.check_displayFog.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.check_displayFog.Location = new System.Drawing.Point(16, 19);
+            this.check_displayFog.Location = new System.Drawing.Point(6, 19);
             this.check_displayFog.Name = "check_displayFog";
-            this.check_displayFog.Size = new System.Drawing.Size(78, 17);
+            this.check_displayFog.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.check_displayFog.Size = new System.Drawing.Size(84, 17);
             this.check_displayFog.TabIndex = 15;
-            this.check_displayFog.Text = "Display fog";
+            this.check_displayFog.Text = "Display Fog:";
             this.check_displayFog.UseVisualStyleBackColor = true;
             this.check_displayFog.CheckedChanged += new System.EventHandler(this.ValueChanged);
             // 
             // val_endDistance
             // 
             this.val_endDistance.DecimalPlaces = 4;
-            this.val_endDistance.Location = new System.Drawing.Point(73, 103);
+            this.val_endDistance.Location = new System.Drawing.Point(88, 98);
             this.val_endDistance.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.val_endDistance.Maximum = new decimal(new int[] {
             65,
@@ -522,16 +350,16 @@ namespace SM64DSe
             // lbl_endDistance
             // 
             this.lbl_endDistance.AutoSize = true;
-            this.lbl_endDistance.Location = new System.Drawing.Point(-3, 105);
+            this.lbl_endDistance.Location = new System.Drawing.Point(7, 100);
             this.lbl_endDistance.Name = "lbl_endDistance";
-            this.lbl_endDistance.Size = new System.Drawing.Size(69, 13);
+            this.lbl_endDistance.Size = new System.Drawing.Size(74, 13);
             this.lbl_endDistance.TabIndex = 12;
-            this.lbl_endDistance.Text = "End distance";
+            this.lbl_endDistance.Text = "End Distance:";
             // 
             // val_startDistance
             // 
             this.val_startDistance.DecimalPlaces = 4;
-            this.val_startDistance.Location = new System.Drawing.Point(73, 77);
+            this.val_startDistance.Location = new System.Drawing.Point(88, 72);
             this.val_startDistance.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.val_startDistance.Maximum = new decimal(new int[] {
             65,
@@ -546,76 +374,59 @@ namespace SM64DSe
             // lbl_startDistance
             // 
             this.lbl_startDistance.AutoSize = true;
-            this.lbl_startDistance.Location = new System.Drawing.Point(-3, 79);
+            this.lbl_startDistance.Location = new System.Drawing.Point(7, 74);
             this.lbl_startDistance.Name = "lbl_startDistance";
-            this.lbl_startDistance.Size = new System.Drawing.Size(72, 13);
+            this.lbl_startDistance.Size = new System.Drawing.Size(77, 13);
             this.lbl_startDistance.TabIndex = 10;
-            this.lbl_startDistance.Text = "Start distance";
+            this.lbl_startDistance.Text = "Start Distance:";
             // 
             // btnToogleCollapseColor
             // 
-            this.btnToogleCollapseColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToogleCollapseColor.Image = global::SM64DSe.Properties.Resources.collapseButton;
-            this.btnToogleCollapseColor.Location = new System.Drawing.Point(250, 0);
-            this.btnToogleCollapseColor.Name = "btnToogleCollapseColor";
-            this.btnToogleCollapseColor.Size = new System.Drawing.Size(16, 16);
-            this.btnToogleCollapseColor.TabIndex = 9;
-            this.btnToogleCollapseColor.TabStop = false;
-            this.btnToogleCollapseColor.Click += new System.EventHandler(this.btnToogleCollapseColor_Click);
+            this.btnToggleCollapseFog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToggleCollapseFog.Location = new System.Drawing.Point(251, 0);
+            this.btnToggleCollapseFog.Name = "btnToogleCollapseColor";
             // 
             // box_parameters
             // 
-            this.box_parameters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.box_parameters.Controls.Add(this.btnToogleCollapseParameters);
+            this.box_parameters.Controls.Add(this.btnToggleCollapseParameters);
             this.box_parameters.Cursor = System.Windows.Forms.Cursors.Default;
-            this.box_parameters.Location = new System.Drawing.Point(3, 145);
+            this.box_parameters.Location = new System.Drawing.Point(3, 187);
+            this.box_parameters.MinimumSize = new System.Drawing.Size(267, 0);
             this.box_parameters.Name = "box_parameters";
-            this.box_parameters.Size = new System.Drawing.Size(266, 115);
-            this.box_parameters.TabIndex = 9;
+            this.box_parameters.Size = new System.Drawing.Size(267, 115);
+            this.box_parameters.TabIndex = 13;
             this.box_parameters.TabStop = false;
             this.box_parameters.Text = "Parameters";
             this.box_parameters.Visible = false;
             // 
             // btnToogleCollapseParameters
             // 
-            this.btnToogleCollapseParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToogleCollapseParameters.Image = global::SM64DSe.Properties.Resources.collapseButton;
-            this.btnToogleCollapseParameters.Location = new System.Drawing.Point(250, 0);
-            this.btnToogleCollapseParameters.Name = "btnToogleCollapseParameters";
-            this.btnToogleCollapseParameters.Size = new System.Drawing.Size(16, 16);
-            this.btnToogleCollapseParameters.TabIndex = 10;
-            this.btnToogleCollapseParameters.TabStop = false;
-            this.btnToogleCollapseParameters.Click += new System.EventHandler(this.btnToogleCollapseParameters_Click);
+            this.btnToggleCollapseParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToggleCollapseParameters.Location = new System.Drawing.Point(251, 0);
+            this.btnToggleCollapseParameters.Name = "btnToogleCollapseParameters";
             // 
             // box_rotation
             // 
-            this.box_rotation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.box_rotation.Controls.Add(this.btnToogleCollapseRotation);
+            this.box_rotation.Controls.Add(this.btnToggleCollapseRotation);
             this.box_rotation.Controls.Add(this.val_rotY);
             this.box_rotation.Controls.Add(this.val_rotX);
             this.box_rotation.Controls.Add(this.lbl_rotY);
             this.box_rotation.Controls.Add(this.lbl_rotX);
             this.box_rotation.Cursor = System.Windows.Forms.Cursors.Default;
-            this.box_rotation.Location = new System.Drawing.Point(3, 101);
+            this.box_rotation.Location = new System.Drawing.Point(3, 135);
+            this.box_rotation.MinimumSize = new System.Drawing.Size(267, 0);
             this.box_rotation.Name = "box_rotation";
-            this.box_rotation.Size = new System.Drawing.Size(266, 39);
-            this.box_rotation.TabIndex = 6;
+            this.box_rotation.Size = new System.Drawing.Size(267, 46);
+            this.box_rotation.TabIndex = 12;
             this.box_rotation.TabStop = false;
             this.box_rotation.Text = "Rotation";
             this.box_rotation.Visible = false;
             // 
             // btnToogleCollapseRotation
             // 
-            this.btnToogleCollapseRotation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToogleCollapseRotation.Image = global::SM64DSe.Properties.Resources.collapseButton;
-            this.btnToogleCollapseRotation.Location = new System.Drawing.Point(250, -1);
-            this.btnToogleCollapseRotation.Name = "btnToogleCollapseRotation";
-            this.btnToogleCollapseRotation.Size = new System.Drawing.Size(16, 16);
-            this.btnToogleCollapseRotation.TabIndex = 8;
-            this.btnToogleCollapseRotation.TabStop = false;
-            this.btnToogleCollapseRotation.Click += new System.EventHandler(this.btnToogleCollapseRotation_Click);
+            this.btnToggleCollapseRotation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToggleCollapseRotation.Location = new System.Drawing.Point(251, 0);
+            this.btnToggleCollapseRotation.Name = "btnToogleCollapseRotation";
             // 
             // val_rotY
             // 
@@ -626,7 +437,7 @@ namespace SM64DSe
             0,
             0,
             65536});
-            this.val_rotY.Location = new System.Drawing.Point(109, 18);
+            this.val_rotY.Location = new System.Drawing.Point(109, 19);
             this.val_rotY.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.val_rotY.Maximum = new decimal(new int[] {
             2025,
@@ -639,7 +450,7 @@ namespace SM64DSe
             0,
             -2147483648});
             this.val_rotY.Name = "val_rotY";
-            this.val_rotY.Size = new System.Drawing.Size(92, 20);
+            this.val_rotY.Size = new System.Drawing.Size(58, 20);
             this.val_rotY.TabIndex = 8;
             this.val_rotY.Tag = "";
             this.val_rotY.ValueChanged += new System.EventHandler(this.ValueChanged);
@@ -654,7 +465,7 @@ namespace SM64DSe
             0,
             0,
             65536});
-            this.val_rotX.Location = new System.Drawing.Point(26, 18);
+            this.val_rotX.Location = new System.Drawing.Point(26, 19);
             this.val_rotX.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.val_rotX.Maximum = new decimal(new int[] {
             3375,
@@ -670,26 +481,24 @@ namespace SM64DSe
             // lbl_rotY
             // 
             this.lbl_rotY.AutoSize = true;
-            this.lbl_rotY.Location = new System.Drawing.Point(90, 20);
+            this.lbl_rotY.Location = new System.Drawing.Point(90, 21);
             this.lbl_rotY.Name = "lbl_rotY";
-            this.lbl_rotY.Size = new System.Drawing.Size(15, 13);
+            this.lbl_rotY.Size = new System.Drawing.Size(17, 13);
             this.lbl_rotY.TabIndex = 3;
-            this.lbl_rotY.Text = "y:";
+            this.lbl_rotY.Text = "Y:";
             // 
             // lbl_rotX
             // 
             this.lbl_rotX.AutoSize = true;
-            this.lbl_rotX.Location = new System.Drawing.Point(7, 20);
+            this.lbl_rotX.Location = new System.Drawing.Point(6, 21);
             this.lbl_rotX.Name = "lbl_rotX";
-            this.lbl_rotX.Size = new System.Drawing.Size(15, 13);
+            this.lbl_rotX.Size = new System.Drawing.Size(17, 13);
             this.lbl_rotX.TabIndex = 2;
-            this.lbl_rotX.Text = "x:";
+            this.lbl_rotX.Text = "X:";
             // 
             // box_position
             // 
-            this.box_position.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.box_position.Controls.Add(this.btnToogleCollapsePosition);
+            this.box_position.Controls.Add(this.btnToggleCollapsePosition);
             this.box_position.Controls.Add(this.val_posZ);
             this.box_position.Controls.Add(this.val_posY);
             this.box_position.Controls.Add(this.label4);
@@ -697,24 +506,20 @@ namespace SM64DSe
             this.box_position.Controls.Add(this.val_posX);
             this.box_position.Controls.Add(this.lbl_posX);
             this.box_position.Cursor = System.Windows.Forms.Cursors.Default;
-            this.box_position.Location = new System.Drawing.Point(3, 56);
+            this.box_position.Location = new System.Drawing.Point(3, 83);
+            this.box_position.MinimumSize = new System.Drawing.Size(267, 0);
             this.box_position.Name = "box_position";
-            this.box_position.Size = new System.Drawing.Size(266, 39);
-            this.box_position.TabIndex = 2;
+            this.box_position.Size = new System.Drawing.Size(267, 46);
+            this.box_position.TabIndex = 11;
             this.box_position.TabStop = false;
             this.box_position.Text = "Position";
             this.box_position.Visible = false;
             // 
             // btnToogleCollapsePosition
             // 
-            this.btnToogleCollapsePosition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToogleCollapsePosition.Image = global::SM64DSe.Properties.Resources.collapseButton;
-            this.btnToogleCollapsePosition.Location = new System.Drawing.Point(250, 0);
-            this.btnToogleCollapsePosition.Name = "btnToogleCollapsePosition";
-            this.btnToogleCollapsePosition.Size = new System.Drawing.Size(16, 16);
-            this.btnToogleCollapsePosition.TabIndex = 7;
-            this.btnToogleCollapsePosition.TabStop = false;
-            this.btnToogleCollapsePosition.Click += new System.EventHandler(this.btnToogleCollapsePosition_Click);
+            this.btnToggleCollapsePosition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToggleCollapsePosition.Location = new System.Drawing.Point(251, 0);
+            this.btnToggleCollapsePosition.Name = "btnToogleCollapsePosition";
             // 
             // val_posZ
             // 
@@ -724,7 +529,7 @@ namespace SM64DSe
             0,
             0,
             65536});
-            this.val_posZ.Location = new System.Drawing.Point(186, 18);
+            this.val_posZ.Location = new System.Drawing.Point(194, 19);
             this.val_posZ.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.val_posZ.Maximum = new decimal(new int[] {
             32,
@@ -749,7 +554,7 @@ namespace SM64DSe
             0,
             0,
             65536});
-            this.val_posY.Location = new System.Drawing.Point(109, 18);
+            this.val_posY.Location = new System.Drawing.Point(109, 19);
             this.val_posY.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.val_posY.Maximum = new decimal(new int[] {
             32,
@@ -769,20 +574,20 @@ namespace SM64DSe
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(173, 20);
+            this.label4.Location = new System.Drawing.Point(173, 21);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(15, 13);
+            this.label4.Size = new System.Drawing.Size(17, 13);
             this.label4.TabIndex = 4;
-            this.label4.Text = "z:";
+            this.label4.Text = "Z:";
             // 
             // lbl_posY
             // 
             this.lbl_posY.AutoSize = true;
-            this.lbl_posY.Location = new System.Drawing.Point(90, 20);
+            this.lbl_posY.Location = new System.Drawing.Point(90, 21);
             this.lbl_posY.Name = "lbl_posY";
-            this.lbl_posY.Size = new System.Drawing.Size(15, 13);
+            this.lbl_posY.Size = new System.Drawing.Size(17, 13);
             this.lbl_posY.TabIndex = 3;
-            this.lbl_posY.Text = "y:";
+            this.lbl_posY.Text = "Y:";
             // 
             // val_posX
             // 
@@ -792,7 +597,7 @@ namespace SM64DSe
             0,
             0,
             65536});
-            this.val_posX.Location = new System.Drawing.Point(26, 18);
+            this.val_posX.Location = new System.Drawing.Point(26, 19);
             this.val_posX.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.val_posX.Maximum = new decimal(new int[] {
             32,
@@ -812,20 +617,130 @@ namespace SM64DSe
             // lbl_posX
             // 
             this.lbl_posX.AutoSize = true;
-            this.lbl_posX.Location = new System.Drawing.Point(7, 20);
+            this.lbl_posX.Location = new System.Drawing.Point(6, 21);
             this.lbl_posX.Name = "lbl_posX";
-            this.lbl_posX.Size = new System.Drawing.Size(15, 13);
+            this.lbl_posX.Size = new System.Drawing.Size(17, 13);
             this.lbl_posX.TabIndex = 2;
-            this.lbl_posX.Text = "x:";
+            this.lbl_posX.Text = "X:";
+            // 
+            // box_general
+            // 
+            this.box_general.Controls.Add(this.btnOpenObjectList);
+            this.box_general.Controls.Add(this.val_act);
+            this.box_general.Controls.Add(this.btnToggleCollapseGeneral);
+            this.box_general.Controls.Add(this.val_objectId);
+            this.box_general.Controls.Add(this.lblPropertiesGeneralArea);
+            this.box_general.Controls.Add(this.lblPropertiesGeneralStar);
+            this.box_general.Controls.Add(this.val_area);
+            this.box_general.Controls.Add(this.lblPropertiesGeneralObjectID);
+            this.box_general.Cursor = System.Windows.Forms.Cursors.Default;
+            this.box_general.Location = new System.Drawing.Point(3, 4);
+            this.box_general.MinimumSize = new System.Drawing.Size(267, 0);
+            this.box_general.Name = "box_general";
+            this.box_general.Size = new System.Drawing.Size(267, 73);
+            this.box_general.TabIndex = 10;
+            this.box_general.TabStop = false;
+            this.box_general.Text = "General";
+            this.box_general.Visible = false;
+            // 
+            // btnOpenObjectList
+            // 
+            this.btnOpenObjectList.Location = new System.Drawing.Point(149, 43);
+            this.btnOpenObjectList.Name = "btnOpenObjectList";
+            this.btnOpenObjectList.Size = new System.Drawing.Size(88, 23);
+            this.btnOpenObjectList.TabIndex = 11;
+            this.btnOpenObjectList.Text = "ObjectList";
+            this.btnOpenObjectList.UseVisualStyleBackColor = true;
+            this.btnOpenObjectList.Click += new System.EventHandler(this.btnOpenObjectList_Click);
+            // 
+            // val_act
+            // 
+            this.val_act.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.val_act.FormattingEnabled = true;
+            this.val_act.Items.AddRange(new object[] {
+            "All",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"});
+            this.val_act.Location = new System.Drawing.Point(75, 19);
+            this.val_act.Name = "val_act";
+            this.val_act.Size = new System.Drawing.Size(58, 21);
+            this.val_act.TabIndex = 10;
+            this.val_act.SelectedValueChanged += new System.EventHandler(this.ValueChanged);
+            // 
+            // btnToogleCollapseGeneral
+            // 
+            this.btnToggleCollapseGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToggleCollapseGeneral.Location = new System.Drawing.Point(251, 0);
+            this.btnToggleCollapseGeneral.Name = "btnToogleCollapseGeneral";
+            // 
+            // val_objectId
+            // 
+            this.val_objectId.Location = new System.Drawing.Point(75, 46);
+            this.val_objectId.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
+            this.val_objectId.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.val_objectId.Name = "val_objectId";
+            this.val_objectId.Size = new System.Drawing.Size(58, 20);
+            this.val_objectId.TabIndex = 5;
+            this.val_objectId.ValueChanged += new System.EventHandler(this.ValueChanged);
+            // 
+            // lblPropertiesGeneralArea
+            // 
+            this.lblPropertiesGeneralArea.AutoSize = true;
+            this.lblPropertiesGeneralArea.Location = new System.Drawing.Point(146, 22);
+            this.lblPropertiesGeneralArea.Name = "lblPropertiesGeneralArea";
+            this.lblPropertiesGeneralArea.Size = new System.Drawing.Size(32, 13);
+            this.lblPropertiesGeneralArea.TabIndex = 4;
+            this.lblPropertiesGeneralArea.Text = "Area:";
+            // 
+            // lblPropertiesGeneralStar
+            // 
+            this.lblPropertiesGeneralStar.AutoSize = true;
+            this.lblPropertiesGeneralStar.Location = new System.Drawing.Point(6, 22);
+            this.lblPropertiesGeneralStar.Name = "lblPropertiesGeneralStar";
+            this.lblPropertiesGeneralStar.Size = new System.Drawing.Size(50, 13);
+            this.lblPropertiesGeneralStar.TabIndex = 3;
+            this.lblPropertiesGeneralStar.Text = "Star/Act:";
+            // 
+            // val_area
+            // 
+            this.val_area.Location = new System.Drawing.Point(179, 20);
+            this.val_area.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
+            this.val_area.Maximum = new decimal(new int[] {
+            7,
+            0,
+            0,
+            0});
+            this.val_area.Name = "val_area";
+            this.val_area.Size = new System.Drawing.Size(58, 20);
+            this.val_area.TabIndex = 3;
+            this.val_area.ValueChanged += new System.EventHandler(this.ValueChanged);
+            // 
+            // lblPropertiesGeneralObjectID
+            // 
+            this.lblPropertiesGeneralObjectID.AutoSize = true;
+            this.lblPropertiesGeneralObjectID.Location = new System.Drawing.Point(6, 48);
+            this.lblPropertiesGeneralObjectID.Name = "lblPropertiesGeneralObjectID";
+            this.lblPropertiesGeneralObjectID.Size = new System.Drawing.Size(55, 13);
+            this.lblPropertiesGeneralObjectID.TabIndex = 2;
+            this.lblPropertiesGeneralObjectID.Text = "Object ID:";
             // 
             // btnPasteCoordinates
             // 
             this.btnPasteCoordinates.Enabled = false;
-            this.btnPasteCoordinates.Location = new System.Drawing.Point(134, 0);
+            this.btnPasteCoordinates.Location = new System.Drawing.Point(156, 0);
             this.btnPasteCoordinates.Name = "btnPasteCoordinates";
             this.btnPasteCoordinates.Size = new System.Drawing.Size(130, 23);
             this.btnPasteCoordinates.TabIndex = 2;
-            this.btnPasteCoordinates.Text = "PasteCoordinates";
+            this.btnPasteCoordinates.Text = "Paste Co-ordinates";
             this.btnPasteCoordinates.UseVisualStyleBackColor = true;
             this.btnPasteCoordinates.Visible = false;
             this.btnPasteCoordinates.Click += new System.EventHandler(this.btnPasteCoordinates_Click);
@@ -834,9 +749,9 @@ namespace SM64DSe
             // 
             this.btnCopyCoordinates.Location = new System.Drawing.Point(0, 0);
             this.btnCopyCoordinates.Name = "btnCopyCoordinates";
-            this.btnCopyCoordinates.Size = new System.Drawing.Size(128, 23);
+            this.btnCopyCoordinates.Size = new System.Drawing.Size(130, 23);
             this.btnCopyCoordinates.TabIndex = 1;
-            this.btnCopyCoordinates.Text = "CopyCoordinates";
+            this.btnCopyCoordinates.Text = "Copy Co-ordinates";
             this.btnCopyCoordinates.UseVisualStyleBackColor = true;
             this.btnCopyCoordinates.Visible = false;
             this.btnCopyCoordinates.Click += new System.EventHandler(this.btnCopyCoordinates_Click);
@@ -1038,30 +953,30 @@ namespace SM64DSe
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(161, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(162, 22);
             this.toolStripMenuItem1.Tag = "8";
             this.toolStripMenuItem1.Text = "Fog";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(161, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(162, 22);
             this.toolStripMenuItem2.Tag = "12";
             this.toolStripMenuItem2.Text = "Minimap Scale";
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(161, 22);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(162, 22);
             this.toolStripMenuItem3.Tag = "11";
             this.toolStripMenuItem3.Text = "Minimap Tile ID";
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(161, 22);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(162, 22);
             this.toolStripMenuItem4.Tag = "14";
-            this.toolStripMenuItem4.Text = "Unkown Type 14";
+            this.toolStripMenuItem4.Text = "Star Camera";
             // 
             // btnImportOtherModel
             // 
@@ -1120,33 +1035,20 @@ namespace SM64DSe
             // tsViewActions
             // 
             this.tsViewActions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnLOL,
             this.btnImportXML,
             this.btnExportXML,
-            this.btnScreenshot,
             this.toolStripSeparator4,
-            this.btnOrthView,
             this.menuGridSettings,
             this.menuRestrictionPlane,
-            this.btnMakeOverlay});
+            this.btnScreenshot,
+            this.btnOpenDisplayOptions,
+            this.btnMakeOverlay,
+            this.btnOrthView});
             this.tsViewActions.Location = new System.Drawing.Point(0, 0);
             this.tsViewActions.Name = "tsViewActions";
             this.tsViewActions.Size = new System.Drawing.Size(664, 25);
             this.tsViewActions.TabIndex = 0;
             this.tsViewActions.Text = "toolStrip2";
-            // 
-            // btnLOL
-            // 
-            this.btnLOL.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btnLOL.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnLOL.Image = ((System.Drawing.Image)(resources.GetObject("btnLOL.Image")));
-            this.btnLOL.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnLOL.Name = "btnLOL";
-            this.btnLOL.Size = new System.Drawing.Size(24, 22);
-            this.btnLOL.Text = "lol";
-            this.btnLOL.ToolTipText = "general purpose button";
-            this.btnLOL.Visible = false;
-            this.btnLOL.Click += new System.EventHandler(this.btnLOL_Click);
             // 
             // btnImportXML
             // 
@@ -1166,31 +1068,11 @@ namespace SM64DSe
             this.btnExportXML.Text = "Export XML";
             this.btnExportXML.Click += new System.EventHandler(this.btnExportXML_Click);
             // 
-            // btnScreenshot
-            // 
-            this.btnScreenshot.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btnScreenshot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnScreenshot.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnScreenshot.Name = "btnScreenshot";
-            this.btnScreenshot.Size = new System.Drawing.Size(69, 22);
-            this.btnScreenshot.Text = "Screenshot";
-            this.btnScreenshot.Click += new System.EventHandler(this.btnScreenshot_Click);
-            // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
-            // 
-            // btnOrthView
-            // 
-            this.btnOrthView.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btnOrthView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnOrthView.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnOrthView.Name = "btnOrthView";
-            this.btnOrthView.Size = new System.Drawing.Size(100, 22);
-            this.btnOrthView.Text = "Orthogonal View";
-            this.btnOrthView.Click += new System.EventHandler(this.btnOrthView_Click);
             // 
             // menuGridSettings
             // 
@@ -1318,6 +1200,26 @@ namespace SM64DSe
             this.txtRstPlaneOffZ.Text = "0.0";
             this.txtRstPlaneOffZ.ToolTipText = "Distance from Origin";
             // 
+            // btnScreenshot
+            // 
+            this.btnScreenshot.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btnScreenshot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnScreenshot.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnScreenshot.Name = "btnScreenshot";
+            this.btnScreenshot.Size = new System.Drawing.Size(69, 22);
+            this.btnScreenshot.Text = "Screenshot";
+            this.btnScreenshot.Click += new System.EventHandler(this.btnScreenshot_Click);
+            // 
+            // btnOpenDisplayOptions
+            // 
+            this.btnOpenDisplayOptions.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btnOpenDisplayOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnOpenDisplayOptions.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnOpenDisplayOptions.Name = "btnOpenDisplayOptions";
+            this.btnOpenDisplayOptions.Size = new System.Drawing.Size(94, 22);
+            this.btnOpenDisplayOptions.Text = "Display Options";
+            this.btnOpenDisplayOptions.Click += new System.EventHandler(this.btnOpenDisplayOptions_Click);
+            // 
             // btnMakeOverlay
             // 
             this.btnMakeOverlay.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -1327,6 +1229,16 @@ namespace SM64DSe
             this.btnMakeOverlay.Text = "Make Level Overlay";
             this.btnMakeOverlay.ToolTipText = "Ready to show off your level coding skills?";
             this.btnMakeOverlay.Click += new System.EventHandler(this.btnMakeOverlay_Click);
+            // 
+            // btnOrthView
+            // 
+            this.btnOrthView.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btnOrthView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnOrthView.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnOrthView.Name = "btnOrthView";
+            this.btnOrthView.Size = new System.Drawing.Size(100, 19);
+            this.btnOrthView.Text = "Orthogonal View";
+            this.btnOrthView.Click += new System.EventHandler(this.btnOrthView_Click);
             // 
             // tsToolBar
             // 
@@ -1405,7 +1317,7 @@ namespace SM64DSe
             this.btnEditTexAnim.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnEditTexAnim.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnEditTexAnim.Name = "btnEditTexAnim";
-            this.btnEditTexAnim.Size = new System.Drawing.Size(106, 22);
+            this.btnEditTexAnim.Size = new System.Drawing.Size(107, 22);
             this.btnEditTexAnim.Text = "Texture animation";
             this.btnEditTexAnim.Click += new System.EventHandler(this.btnEditTexAnim_Click);
             // 
@@ -1651,34 +1563,30 @@ namespace SM64DSe
             this.spcPropertyInterface.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.spcPropertyInterface)).EndInit();
             this.spcPropertyInterface.ResumeLayout(false);
-            this.box_general.ResumeLayout(false);
-            this.box_general.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.btnToogleCollapseGeneral)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.val_objectId)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.val_area)).EndInit();
+            this.pnlPropertyPanel.ResumeLayout(false);
             this.box_fogSettings.ResumeLayout(false);
             this.box_fogSettings.PerformLayout();
-            this.box_color.ResumeLayout(false);
-            this.box_color.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.val_r)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.val_b)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.val_g)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_endDistance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_startDistance)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.btnToogleCollapseColor)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnToggleCollapseFog)).EndInit();
             this.box_parameters.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.btnToogleCollapseParameters)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnToggleCollapseParameters)).EndInit();
             this.box_rotation.ResumeLayout(false);
             this.box_rotation.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.btnToogleCollapseRotation)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnToggleCollapseRotation)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_rotY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_rotX)).EndInit();
             this.box_position.ResumeLayout(false);
             this.box_position.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.btnToogleCollapsePosition)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnToggleCollapsePosition)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_posZ)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_posY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.val_posX)).EndInit();
+            this.box_general.ResumeLayout(false);
+            this.box_general.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.btnToggleCollapseGeneral)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.val_objectId)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.val_area)).EndInit();
             this.tsEditActions.ResumeLayout(false);
             this.tsEditActions.PerformLayout();
             this.tsViewActions.ResumeLayout(false);
@@ -1733,8 +1641,7 @@ namespace SM64DSe
         private System.Windows.Forms.ToolStripMenuItem btnAddTpSrc;
         private System.Windows.Forms.ToolStripMenuItem btnAddTpDst;
         private System.Windows.Forms.ToolStripButton btnAddView;
-        private System.Windows.Forms.ToolStripButton btnLOL;
-        private OpenTK.GLControl glLevelView;
+        private SelectionHighlightGLControl glLevelView;
         private System.Windows.Forms.ToolStripButton btnEditMinimap;
         private System.Windows.Forms.ToolStripButton btnReplaceObjModel;
         private System.Windows.Forms.ToolStripButton btnExportObjectModel;
@@ -1788,24 +1695,18 @@ namespace SM64DSe
         private System.Windows.Forms.NumericUpDown val_posX;
         private System.Windows.Forms.Label lbl_posX;
         private System.Windows.Forms.GroupBox box_fogSettings;
-        private System.Windows.Forms.NumericUpDown val_b;
-        private System.Windows.Forms.NumericUpDown val_g;
-        private System.Windows.Forms.Label lbl_b;
-        private System.Windows.Forms.Label lbl_g;
-        private System.Windows.Forms.NumericUpDown val_r;
-        private System.Windows.Forms.Label lbl_r;
         private System.Windows.Forms.NumericUpDown val_rotY;
-        private System.Windows.Forms.PictureBox btnToogleCollapsePosition;
-        private System.Windows.Forms.PictureBox btnToogleCollapseColor;
-        private System.Windows.Forms.PictureBox btnToogleCollapseParameters;
-        private System.Windows.Forms.PictureBox btnToogleCollapseRotation;
+        private CollapseExpandButton btnToggleCollapsePosition;
+        private CollapseExpandButton btnToggleCollapseFog;
+        private CollapseExpandButton btnToggleCollapseParameters;
+        private CollapseExpandButton btnToggleCollapseRotation;
         private System.Windows.Forms.GroupBox box_general;
-        private System.Windows.Forms.PictureBox btnToogleCollapseGeneral;
+        private CollapseExpandButton btnToggleCollapseGeneral;
         private System.Windows.Forms.NumericUpDown val_objectId;
-        private System.Windows.Forms.Label lbl_objectId;
-        private System.Windows.Forms.Label lbl_star;
+        private System.Windows.Forms.Label lblPropertiesGeneralArea;
+        private System.Windows.Forms.Label lblPropertiesGeneralStar;
         private System.Windows.Forms.NumericUpDown val_area;
-        private System.Windows.Forms.Label lbl_area;
+        private System.Windows.Forms.Label lblPropertiesGeneralObjectID;
         private System.Windows.Forms.ComboBox val_act;
         private System.Windows.Forms.Button btnOpenObjectList;
         private System.Windows.Forms.NumericUpDown val_startDistance;
@@ -1813,9 +1714,12 @@ namespace SM64DSe
         private System.Windows.Forms.CheckBox check_displayFog;
         private System.Windows.Forms.NumericUpDown val_endDistance;
         private System.Windows.Forms.Label lbl_endDistance;
-        private System.Windows.Forms.Panel box_color;
         private System.Windows.Forms.SplitContainer spcPropertyInterface;
         private System.Windows.Forms.ToolStripButton btnOffsetAllCoords;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripButton btnOpenDisplayOptions;
+        private System.Windows.Forms.Panel pnlPropertyPanel;
+        private ColourPickerButton btnFogColour;
+        private System.Windows.Forms.Label label1;
     }
 }
