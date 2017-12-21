@@ -43,23 +43,49 @@ namespace SM64DSe
         private static Color k_HoverColor = Color.FromArgb(255, 255, 192);
 
         private bool settingValues = false;
-        private int box_general_NextHeight = 18;
-        private int box_position_NextHeight = 18;
-        private int box_rotation_NextHeight = 18;
-        private int box_fogSettings_NextHeight = 18;
-        private int box_parameters_NextHeight = 18;
 
         private Button btnOpenRawEditor = new Button();
         public RawEditorForm m_rawEditor;
 
-        private bool m_wasMinimized = false;
-
         private int m_areaCount = 1;
         private int m_currentArea = -1;
+        public SM64DSe.BMD.ModelRenderSettings LevelModelDisplayFlags = new SM64DSe.BMD.ModelRenderSettings();
 
         public ToolTip defaultToolTip;
 
+        private System.Windows.Forms.Timer m_texAnimTimer;
+        private int m_texAnimFrame = 0;
+        private void InitTimer()
+        {
+            m_texAnimTimer = new System.Windows.Forms.Timer();
+            m_texAnimTimer.Interval = (int)(1000f / 30f);
+            m_texAnimTimer.Tick += new EventHandler(m_AnimationTimer_Tick);
+        }
+
+        private void StartTimer()
+        {
+            m_texAnimFrame = 0;
+            m_texAnimTimer.Start();
+        }
+
+        private void StopTimer()
+        {
+            m_texAnimTimer.Stop();
+        }
+
+        private void m_AnimationTimer_Tick(object sender, EventArgs e)
+        {
+            RenderLevelAreas(m_currentArea);
+            m_texAnimFrame++;
+        }
+
         private void LevelEditorForm_Load(object sender, EventArgs e)
+        {
+            initialiseToolTip();
+            initialiseCollapseExpandButtons();
+        }
+
+        private void initialiseToolTip()
         {
             defaultToolTip = new ToolTip();
 
@@ -69,17 +95,21 @@ namespace SM64DSe
 
             defaultToolTip.ShowAlways = true;
 
+            defaultToolTip.SetToolTip(this.val_posX, "The object's X-Position");
+            defaultToolTip.SetToolTip(this.val_posY, "The object's Y-Position");
+            defaultToolTip.SetToolTip(this.val_posZ, "The object's Z-Position");
 
-            defaultToolTip.SetToolTip(this.val_posX, "The objects X-Position");
-            defaultToolTip.SetToolTip(this.val_posY, "The objects Y-Position");
-            defaultToolTip.SetToolTip(this.val_posZ, "The objects Z-Position");
+            defaultToolTip.SetToolTip(this.val_rotX, "The object's X-Rotation");
+            defaultToolTip.SetToolTip(this.val_rotY, "The object's Y-Rotation");
+        }
 
-            defaultToolTip.SetToolTip(this.val_rotX, "The objects X-Rotation");
-            defaultToolTip.SetToolTip(this.val_rotY, "The objects Y-Rotation");
-
-            defaultToolTip.SetToolTip(this.val_r, "The Fogs red Color Value");
-            defaultToolTip.SetToolTip(this.val_g, "The Fogs green Color Value");
-            defaultToolTip.SetToolTip(this.val_b, "The Fogs blue Color Value");
+        private void initialiseCollapseExpandButtons()
+        {
+            btnToggleCollapseGeneral.Initialise(box_general, resizePropertyInterface);
+            btnToggleCollapsePosition.Initialise(box_position, resizePropertyInterface);
+            btnToggleCollapseRotation.Initialise(box_rotation, resizePropertyInterface);
+            btnToggleCollapseParameters.Initialise(box_parameters, resizePropertyInterface);
+            btnToggleCollapseFog.Initialise(box_fogSettings, resizePropertyInterface);
         }
 
         private void ClampRotation(ref float val, float twopi)
@@ -127,8 +157,6 @@ namespace SM64DSe
         {
             m_Level = new Level(m_LevelID);
 
-            AlignPathNodes();
-
             m_LevelModel = null;
             m_LevelCollMap = new KCL(m_ROM.GetFileFromInternalID(m_Level.m_LevelSettings.KCLFileID));
 
@@ -138,9 +166,11 @@ namespace SM64DSe
         public LevelEditorForm(NitroROM rom, int levelid)
         {
             InitializeComponent();
-            
+            InitTimer();
+
             btnOpenRawEditor.Text = "Raw Editor";
             btnOpenRawEditor.Click += btnOpenRawEditor_Click;
+            btnOpenRawEditor.Location = new Point(5, btnOpenRawEditor.Location.Y);
 
             this.Text = string.Format("[{0}] {1} - {2} {3}", levelid, Strings.LevelNames[levelid], Program.AppTitle, Program.AppVersion);
             
@@ -204,6 +234,11 @@ namespace SM64DSe
             glLevelView.Refresh();
         }
 
+        public void UpdateDisplayFlags()
+        {
+            RenderLevelAreas(m_currentArea);
+        }
+
         public void UpdateLevelModel()
         {
             if (m_LevelModel != null)
@@ -220,18 +255,38 @@ namespace SM64DSe
         {
             m_LevelModelDLs = new int[m_LevelModel.m_ModelChunks.Length, 3];
 
+            LevelTexAnim texAnim;
+
             for (int c = 0; c < m_LevelModel.m_ModelChunks.Length; c++)
             {
                 if ((area > -1) && (c != area))
                     continue;
                 m_LevelModelDLs[c, 0] = GL.GenLists(1);
                 GL.NewList(m_LevelModelDLs[c, 0], ListMode.Compile);
-                m_LevelModel.m_ModelChunks[c].Render(RenderMode.Opaque, 1.0f);
+                if (area == -1)
+                    m_LevelModel.m_ModelChunks[c].Render(RenderMode.Opaque, 1.0f, LevelModelDisplayFlags);
+                else
+                {
+                    LevelTexAnim[] anims = m_Level.m_TexAnims.Where(obj => obj.m_Area == c).ToArray();
+                    if (anims.Length > 0)
+                        m_LevelModel.m_ModelChunks[c].Render(RenderMode.Opaque, 1.0f, LevelModelDisplayFlags, anims[0], m_texAnimFrame);
+                    else
+                        m_LevelModel.m_ModelChunks[c].Render(RenderMode.Opaque, 1.0f, LevelModelDisplayFlags);
+                }
                 GL.EndList();
 
                 m_LevelModelDLs[c, 1] = GL.GenLists(1);
                 GL.NewList(m_LevelModelDLs[c, 1], ListMode.Compile);
-                m_LevelModel.m_ModelChunks[c].Render(RenderMode.Translucent, 1.0f);
+                if (area == -1)
+                    m_LevelModel.m_ModelChunks[c].Render(RenderMode.Translucent, 1.0f, LevelModelDisplayFlags);
+                else
+                {
+                    LevelTexAnim[] anims = m_Level.m_TexAnims.Where(obj => obj.m_Area == c).ToArray();
+                    if (anims.Length > 0)
+                        m_LevelModel.m_ModelChunks[c].Render(RenderMode.Translucent, 1.0f, LevelModelDisplayFlags, anims[0], m_texAnimFrame);
+                    else
+                        m_LevelModel.m_ModelChunks[c].Render(RenderMode.Translucent, 1.0f, LevelModelDisplayFlags);
+                }
                 GL.EndList();
 
                 m_LevelModelDLs[c, 2] = GL.GenLists(1);
@@ -352,9 +407,12 @@ namespace SM64DSe
             return false;
         }
 
-        private void RenderObjectHilite(LevelObject obj, Color color, int dlist)
+        private void RenderObjectHilite(LevelObject obj, Color color, int dlist, bool multiple = false)
         {
-            GL.NewList(dlist, ListMode.Compile);
+            if (!multiple)
+            {
+                GL.NewList(dlist, ListMode.Compile);
+            }
             GL.PushAttrib(AttribMask.AllAttribBits);
 
             GL.Disable(EnableCap.Lighting);
@@ -385,16 +443,20 @@ namespace SM64DSe
             obj.Render(RenderMode.Picking);
 
             GL.PopAttrib();
-            GL.EndList();
+            if (!multiple)
+            {
+                GL.EndList();
+            }
         }
 
-        private void RenderPathHilite(List<LevelObject> objs, System.Boolean closed, Color color, int dlist)
+        private void RenderPathHilite(List<LevelObject> objs, bool closed, Color color, int dlist)
         {
             GL.NewList(dlist, ListMode.Compile);
             GL.PushAttrib(AttribMask.AllAttribBits);
 
             GL.Disable(EnableCap.Lighting);
             GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.DepthFunc(DepthFunction.Always);
             
             for (int i = 0; i < objs.Count(); i++)
             {
@@ -414,86 +476,29 @@ namespace SM64DSe
                     }
                 }
 
-                GL.ColorMask(true, true, true, true);
-                GL.Enable(EnableCap.PolygonOffsetFill);
-                GL.PolygonOffset(-1.0f, -1.0f);
-                GL.StencilFunc(StencilFunction.Equal, 0x1, 0x3);
-                GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Incr);
-                if (i == 0 || objs.Count() == 1)
-                    GL.Color4(Color.FromArgb(50, 0, 255, 0));
-                else if (i == objs.Count() - 1)
-                    GL.Color4(Color.FromArgb(50, 255, 0, 0));
+                Color selectionColour;
+                if (i < 1 || objs.Count < 2)
+                {
+                    selectionColour = Color.FromArgb(50, 0, 255, 0);
+                }
+                else if (!closed && (i == objs.Count() - 1))
+                {
+                    selectionColour = Color.FromArgb(50, 255, 0, 0);
+                }
                 else
-                    GL.Color4(Color.FromArgb(50, color));
-                obj.Render(RenderMode.Picking);
+                {
+                    selectionColour = k_SelectionColor;
+                }
 
-                GL.Disable(EnableCap.PolygonOffsetFill);
-                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-                GL.LineWidth(3.0f);
-                GL.StencilFunc(StencilFunction.Equal, 0x0, 0x3);
-                GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
-                GL.DepthFunc(DepthFunction.Always);
-                if (i == 0 || objs.Count() == 1)
-                    GL.Color4(Color.FromArgb(50, 0, 255, 0));
-                else if (i == objs.Count() - 1)
-                    GL.Color4(Color.FromArgb(50, 255, 0, 0));
-                else
-                    GL.Color4(Color.FromArgb(50, color));
-                obj.Render(RenderMode.Picking);
+                RenderObjectHilite(objs[i], selectionColour, dlist, true);
             }
 
             GL.PopAttrib();
             GL.EndList();
         }
 
-        private void AlignPathNodes()
-        {
-            IEnumerable<LevelObject> pathNodes = m_Level.GetAllObjectsByType(LevelObject.Type.PATH_NODE);
-            IEnumerable<LevelObject> paths = m_Level.GetAllObjectsByType(LevelObject.Type.PATH);
-            AlignPathNodes(paths.ToList<LevelObject>(), pathNodes.ToList<LevelObject>());
-        }
-
-        private void AlignPathNodes(List<LevelObject> paths, List<LevelObject> nodes)
-        {
-            // Aligns the path nodes to point to the next node in their path to make direction clear
-
-            foreach (LevelObject path in paths)
-            {
-                int startNode = path.Parameters[0], endNode = startNode + path.Parameters[1] - 1;
-                int numNodes = nodes.Count;
-
-                if (numNodes == 1)
-                    ((PathPointObject)nodes[0]).m_Renderer = new ColorCubeRenderer(Color.FromArgb(0, 255, 255), Color.FromArgb(0, 64, 64), false);
-                else
-                {
-                    // Render each node as an arrow that points to next node
-                    for (int i = startNode; i <= endNode; i++)
-                    {
-                        int next = (i != endNode) ? (i + 1) : startNode;
-
-                        if (nodes[i] == null) continue;
-
-                        float opposite = nodes[next].Position.X - nodes[i].Position.X;
-                        float adjacent = nodes[next].Position.Z - nodes[i].Position.Z;
-                        float rotY = MathHelper.RadiansToDegrees((float)Math.Atan(opposite / adjacent));
-                        
-                        if (adjacent >= 0)
-                        {
-                            rotY += 180;
-                        }
-                        if (float.IsNaN(rotY))
-                            ((PathPointObject)nodes[i]).m_Renderer = new ColorCubeRenderer(Color.FromArgb(0, 255, 255), Color.FromArgb(0, 64, 64), false);
-                        else
-                            ((PathPointObject)nodes[i]).m_Renderer = new ColourArrowRenderer(Color.FromArgb(0, 255, 255), Color.FromArgb(0, 64, 64), false, 0f, rotY, 0f);
-                    }
-                }
-            }
-        }
-
         public void RefreshObjects(int layer)
         {
-            AlignPathNodes();
-
             RenderObjectLists(RenderMode.Opaque, layer);
             RenderObjectLists(RenderMode.Translucent, layer);
             RenderObjectLists(RenderMode.Picking, layer);
@@ -648,7 +653,7 @@ namespace SM64DSe
                         if (!m_ShowCommonLayer) break;
                         TreeNode minimapScaleNode = tvObjectList.Nodes.Add("minimap_scale", "Minimap Scales");
                         TreeNode fogNode = tvObjectList.Nodes.Add("fog", "Fog");
-                        TreeNode type14Node = tvObjectList.Nodes.Add("type_14", "Type 14 Object");
+                        TreeNode type14Node = tvObjectList.Nodes.Add("type_14", "Star Cameras");
                         TreeNode minimapTileIDNode = tvObjectList.Nodes.Add("minimap_tile_id", "Minimap Tile ID");
 
                         IEnumerable<LevelObject> objects = m_Level.m_LevelObjects.Values.Where(obj => (obj.m_UniqueID >> 28) == 5);
@@ -659,7 +664,7 @@ namespace SM64DSe
                                 case LevelObject.Type.FOG: fogNode.Nodes.Add(obj.m_UniqueID.ToString("X8"), obj.GetDescription()).Tag = obj.m_UniqueID; break;
                                 case LevelObject.Type.MINIMAP_TILE_ID: minimapTileIDNode.Nodes.Add(obj.m_UniqueID.ToString("X8"), obj.GetDescription()).Tag = obj.m_UniqueID; break;
                                 case LevelObject.Type.MINIMAP_SCALE: minimapScaleNode.Nodes.Add(obj.m_UniqueID.ToString("X8"), obj.GetDescription()).Tag = obj.m_UniqueID; break;
-                                case LevelObject.Type.UNKNOWN_14: type14Node.Nodes.Add(obj.m_UniqueID.ToString("X8"), obj.GetDescription()).Tag = obj.m_UniqueID; break;
+                                case LevelObject.Type.STAR_CAMERA: type14Node.Nodes.Add(obj.m_UniqueID.ToString("X8"), obj.GetDescription()).Tag = obj.m_UniqueID; break;
                             }
                         }
                     }
@@ -767,7 +772,7 @@ namespace SM64DSe
                 case LevelObject.Type.EXIT: parentnode = "exit"; obj = m_Level.AddExitObject(layer); break;
                 case LevelObject.Type.MINIMAP_TILE_ID: parentnode = "minimap_tile_id"; obj = m_Level.AddMinimapTileIDObject(layer, area); break;
                 case LevelObject.Type.MINIMAP_SCALE: parentnode = "minimap_scale"; obj = m_Level.AddMinimapScaleObject(layer, area); break;
-                case LevelObject.Type.UNKNOWN_14: parentnode = "type_14"; obj = m_Level.AddType14Object(layer, area); break;
+                case LevelObject.Type.STAR_CAMERA: parentnode = "type_14"; obj = m_Level.AddType14Object(layer, area); break;
             }
 
             if (obj != null)
@@ -867,7 +872,7 @@ namespace SM64DSe
             m_LastClicked = obj.m_UniqueID;
 
             UpdateObjectForRawEditor();
-            initializePropertyInterface();
+            InitializePropertyInterface();
 
             RefreshObjects(m_SelectedObject.m_Layer);
         }
@@ -1258,8 +1263,6 @@ namespace SM64DSe
                     obj.Position = (hit != null) ? ((KCL.RaycastResult)hit).m_Point : Get3DCoords(e.Location, 2.0f);
                 }
 
-                
-
                 SnapToGrid(ref obj.Position);
                 obj.GenerateProperties();
 
@@ -1269,8 +1272,6 @@ namespace SM64DSe
                     btnPasteCoordinates.Visible = true;
                 }
                 
-
-
                 m_Selected = obj.m_UniqueID;
                 m_SelectedObject = obj;
                 m_LastSelected = obj.m_UniqueID;
@@ -1280,7 +1281,7 @@ namespace SM64DSe
                 m_LastClicked = obj.m_UniqueID;
 
                 UpdateObjectForRawEditor();
-                initializePropertyInterface();
+                InitializePropertyInterface();
 
                 RefreshObjects(m_SelectedObject.m_Layer);
 
@@ -1361,7 +1362,7 @@ namespace SM64DSe
                         m_SelectedObject = obj;
 
                         UpdateObjectForRawEditor();
-                        initializePropertyInterface();
+                        InitializePropertyInterface();
 
                         if (obj.m_Properties.Properties.IndexOf("X position") != -1)
                         {
@@ -1614,10 +1615,17 @@ namespace SM64DSe
             UpdateCamera();
         }
 
-        private void FocusCamera(Vector3 position)
+        private void FocusCamera(Vector3 position, float yRotation)
         {
+            float yRotationRadians = MathHelper.DegreesToRadians(-90 - yRotation);
+
             m_CamTarget = position;
+
+            m_CamRotation.X = yRotationRadians;
+            m_CamRotation.Y = 0;
+
             UpdateCamera();
+
             glLevelView.Refresh();
         }
 
@@ -1662,6 +1670,7 @@ namespace SM64DSe
         {
             // save confirmation goes here
             ReleaseModels();
+            StopTimer();
             Program.m_LevelEditors.Remove(this);
         }
 
@@ -1757,8 +1766,13 @@ namespace SM64DSe
             btnEditMisc.Checked = false;
             btn.Checked = true;
 
+            m_Selected = 0xFFFFFFFF;
+            m_SelectedObject = null;
+
             EditMode lastMode = m_EditMode;
             m_EditMode = (EditMode)int.Parse((string)btn.Tag);
+            if (m_EditMode != EditMode.MODEL)
+                StopTimer();
 
             for (int l = 0; l < 8; l++)
             {
@@ -1769,7 +1783,10 @@ namespace SM64DSe
                     {
                         RefreshObjects(0);
                         if (m_EditMode != EditMode.MODEL)
-                            RenderLevelAreas(-1);
+                        {
+                            m_currentArea = -1;
+                            RenderLevelAreas(m_currentArea);
+                        }
                     }
                 }
                 else
@@ -1778,6 +1795,8 @@ namespace SM64DSe
             }
 
             PopulateObjectList();
+
+            InitializePropertyInterface();
 
             glLevelView.Refresh();
         }
@@ -1902,6 +1921,13 @@ namespace SM64DSe
                 RenderLevelAreas(m_currentArea);
                 RefreshObjects(m_AuxLayerNum);
                 RefreshObjects(0);
+                if (m_currentArea > -1)
+                {
+                    Console.WriteLine("Start Animation");
+                    StartTimer();
+                }
+                else
+                    StopTimer();
                 return;
             }
             if (e.Node.Tag == null)
@@ -1916,7 +1942,7 @@ namespace SM64DSe
             m_SelectedObject = m_Level.m_LevelObjects[objid];
 
             UpdateObjectForRawEditor();
-            initializePropertyInterface();
+            InitializePropertyInterface();
 
             if (m_SelectedObject.m_Properties.Properties.IndexOf("X position") != -1)
             {
@@ -1941,7 +1967,7 @@ namespace SM64DSe
                     nodes.Add(node);
                 }
                 PropertyTable ptable = m_SelectedObject.m_Properties;
-                RenderPathHilite(nodes, ((float)ptable["Parameter 5"]==255.0f),k_SelectionColor, m_SelectHiliteDL);
+                RenderPathHilite(nodes, ((ushort)ptable["Parameter 5"] == 255), k_SelectionColor, m_SelectHiliteDL);
                 btnAddPathNode.Visible = true;
             }
             else
@@ -2108,7 +2134,7 @@ namespace SM64DSe
                     RemoveObjects(m_Level.GetAllObjectsByType(LevelObject.Type.FOG).ToList());
                     RemoveObjects(m_Level.GetAllObjectsByType(LevelObject.Type.MINIMAP_TILE_ID).ToList());
                     RemoveObjects(m_Level.GetAllObjectsByType(LevelObject.Type.MINIMAP_SCALE).ToList());
-                    RemoveObjects(m_Level.GetAllObjectsByType(LevelObject.Type.UNKNOWN_14).ToList());
+                    RemoveObjects(m_Level.GetAllObjectsByType(LevelObject.Type.STAR_CAMERA).ToList());
                     slStatusLabel.Text = "Miscellaneous objects removed.";
                     break;
             }
@@ -2131,9 +2157,6 @@ namespace SM64DSe
                 if (m_SelectedObject != null)
                     btnRemoveSel.PerformClick(); // quick cheat
             }
-
-            if (e.KeyCode == Keys.Q)
-                btnLOL.PerformClick();
 
             // Front, side, top, left, back, and bottom views
             if (e.Alt)
@@ -2229,13 +2252,6 @@ namespace SM64DSe
             slStatusLabel.Text = "Level overlay dumped to " + filename;
         }
 
-        private void btnLOL_Click(object sender, EventArgs e)
-        {
-            lol++;
-            if (lol >= KCL.OctreeNode.m_List.Count) lol = 0;
-            glLevelView.Refresh();
-        }
-
         private void btnEditMinimap_Click(object sender, EventArgs e)
         {
             new MinimapEditor(m_Level).Show(this);
@@ -2313,7 +2329,7 @@ namespace SM64DSe
             m_LastClicked = obj.m_UniqueID;
 
             UpdateObjectForRawEditor();
-            initializePropertyInterface();
+            InitializePropertyInterface();
 
             RefreshObjects(m_SelectedObject.m_Layer);
 
@@ -2362,7 +2378,7 @@ namespace SM64DSe
             m_LastClicked = obj.m_UniqueID;
 
             UpdateObjectForRawEditor();
-            initializePropertyInterface();
+            InitializePropertyInterface();
 
             RefreshObjects(m_SelectedObject.m_Layer);
             PopulatePathNodes(m_CurrentPathID);
@@ -2402,7 +2418,7 @@ namespace SM64DSe
             m_LastClicked = obj.m_UniqueID;
 
             UpdateObjectForRawEditor();
-            initializePropertyInterface();
+            InitializePropertyInterface();
 
             RefreshObjects(m_SelectedObject.m_Layer);
 
@@ -2668,36 +2684,6 @@ namespace SM64DSe
                 newValue = (check_displayFog.Checked?1f:0f);
                 propertyName = "Density";
             }
-            else if (sender ==  val_r)
-            {
-                newValue = (float)val_r.Value;
-                propertyName = "RGB R Value";
-                box_color.BackColor = Color.FromArgb(
-                    (int)val_r.Value,
-                    (int)val_g.Value,
-                    (int)val_b.Value
-                );
-            }
-            else if (sender == val_g)
-            {
-                newValue = (float)val_g.Value;
-                propertyName = "RGB G Value";
-                box_color.BackColor = Color.FromArgb(
-                    (int)val_r.Value,
-                    (int)val_g.Value,
-                    (int)val_b.Value
-                );
-            }
-            else if (sender == val_b)
-            {
-                newValue = (float)val_b.Value;
-                propertyName = "RGB B Value";
-                box_color.BackColor = Color.FromArgb(
-                    (int)val_r.Value,
-                    (int)val_g.Value,
-                    (int)val_b.Value
-                );
-            }
             else if (sender == val_startDistance)
             {
                 newValue = (float)val_startDistance.Value;
@@ -2723,7 +2709,7 @@ namespace SM64DSe
                         if (floatToFloat)
                             newFloat = ((FloatField)field).getFloatValue();
                         else
-                            newUshort = InsertBits(ptable[field.m_pgFieldName], field.getValue(), field.m_offset, field.m_length);
+                            newUshort = InsertBitsFromLeft(Convert.ToUInt16(ptable[field.m_pgFieldName]), field.getValue(), field.m_offset, field.m_length);
                         
                         propertyName = field.m_pgFieldName;
                         if (ptable[field.m_pgFieldName] is float)
@@ -2746,6 +2732,8 @@ namespace SM64DSe
                             return;
                         }
                         UpdateParameterForRawEditor(propertyName,Convert.ToUInt16(newValue));
+
+                        break;
                     }
                 }
             } else
@@ -2807,12 +2795,6 @@ namespace SM64DSe
                 }
             }
         }
-
-        private void tc_switchPropertyInterface_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateObjectForRawEditor();
-            initializePropertyInterface();
-        }
         
         private void UpdateObjectForRawEditor()
         {
@@ -2826,7 +2808,25 @@ namespace SM64DSe
                 m_rawEditor.UpdateParameter(name, value);
         }
 
-        public void initializePropertyInterface()
+        private void resizePropertyInterface()
+        {
+            int nextBoxSnapY = 0;
+            foreach (Control control in new Control[] { 
+                box_general, 
+                box_position, 
+                box_rotation, 
+                box_parameters, 
+                box_fogSettings
+            })
+            {
+                if (control.Visible)
+                {
+                    nextBoxSnapY = Helper.snapControlVertically(control, nextBoxSnapY);
+                }
+            }
+        }
+
+        public void InitializePropertyInterface()
         {
             if (m_SelectedObject == null)
             {
@@ -2834,20 +2834,17 @@ namespace SM64DSe
                 return;
             }
             
-            System.Boolean displayGeneral = m_SelectedObject.SupportsActs();
-            System.Boolean displayPos =     m_SelectedObject.HasPosition();
-            System.Boolean displayRot =     m_SelectedObject.SupportsRotation();
-            System.Boolean displayFog =     (m_SelectedObject is FogObject);
-            System.Boolean displayParams =  (m_SelectedObject.m_ParameterFields!=null);
+            bool displayGeneral = m_SelectedObject.SupportsActs();
+            bool displayPos =     m_SelectedObject.HasPosition();
+            bool displayRot =     m_SelectedObject.SupportsRotation();
+            bool displayFog =     (m_SelectedObject is FogObject);
+            bool displayParams =  (m_SelectedObject.m_ParameterFields!=null);
             
             settingValues = true;
             
-            int nextBoxSnapY = 0;
-
             box_general.Visible = displayGeneral;
             if (displayGeneral)
             {
-                nextBoxSnapY = Helper.snapControlVertically(box_general, nextBoxSnapY);
                 val_act.SelectedIndex = m_SelectedObject.m_Layer;
 
                 val_area.Enabled = !(m_SelectedObject is ExitObject);
@@ -2862,8 +2859,6 @@ namespace SM64DSe
             box_position.Visible = displayPos;
             if (displayPos)
             {
-                nextBoxSnapY = Helper.snapControlVertically(box_position, nextBoxSnapY);
-
                 val_posX.Value = (Decimal)m_SelectedObject.Position.X;
                 val_posY.Value = (Decimal)m_SelectedObject.Position.Y;
                 val_posZ.Value = (Decimal)m_SelectedObject.Position.Z;
@@ -2871,28 +2866,19 @@ namespace SM64DSe
             box_rotation.Visible = displayRot;
             if (displayRot)
             {
-                nextBoxSnapY = Helper.snapControlVertically(box_rotation, nextBoxSnapY);
-
                 val_rotY.Value = (Decimal)m_SelectedObject.YRotation;
             }
             box_fogSettings.Visible = displayFog;
             if (displayFog)
             {
-                nextBoxSnapY = Helper.snapControlVertically(box_fogSettings, nextBoxSnapY);
-
                 check_displayFog.Checked = (m_SelectedObject.Parameters[0] != 0);
-                val_r.Value =              m_SelectedObject.Parameters[1];
-                val_g.Value =              m_SelectedObject.Parameters[2];
-                val_b.Value =              m_SelectedObject.Parameters[3];
-                val_startDistance.Value =  (Decimal)(m_SelectedObject.Parameters[4]/1000f);
-                val_endDistance.Value =    (Decimal)(m_SelectedObject.Parameters[5] / 1000f);
-
-                box_color.BackColor = Color.FromArgb(
-                    (int)val_r.Value,
-                    (int)val_g.Value,
-                    (int)val_b.Value
+                btnFogColour.Colour = Color.FromArgb(
+                    m_SelectedObject.Parameters[1],
+                    m_SelectedObject.Parameters[2],
+                    m_SelectedObject.Parameters[3]
                 );
-
+                val_startDistance.Value =  (Decimal)(m_SelectedObject.Parameters[4] / 1000f);
+                val_endDistance.Value =    (Decimal)(m_SelectedObject.Parameters[5] / 1000f);
             }
             box_parameters.Visible = displayParams;
             if (displayParams)
@@ -2921,7 +2907,7 @@ namespace SM64DSe
                         }
                         else
                         {
-                            ushort extractedValue = ExtractBits(value, field.m_offset, field.m_length);
+                            ushort extractedValue = ExtractBitsFromLeft(Convert.ToUInt16(value), field.m_offset, field.m_length);
                             field.setValue(extractedValue);
                         }
 
@@ -2933,23 +2919,24 @@ namespace SM64DSe
                         nextFieldSnapY = Helper.snapControlVertically(control, nextFieldSnapY);
 
                         //snap Horizontally
-                        int nextSnapX = 0;
+                        int nextSnapX = 5;
                         nextSnapX = Helper.snapControlHorizontally(label, nextSnapX);
                         Helper.snapControlHorizontally(control, nextSnapX);
-
-
                     }
 
                     if ((m_SelectedObject is SimpleObject) || (m_SelectedObject is StandardObject) || (m_SelectedObject is PathObject))
                     {
                         box_parameters.Controls.Add(btnOpenRawEditor);
-                        nextFieldSnapY = Helper.snapControlVertically(btnOpenRawEditor, nextFieldSnapY,2);
+                        nextFieldSnapY = Helper.snapControlVertically(btnOpenRawEditor, nextFieldSnapY, 2, 0);
                     }
                 }
+
+                nextFieldSnapY += 5;
                 
                 box_parameters.Height = nextFieldSnapY;
-                nextBoxSnapY = Helper.snapControlVertically(box_parameters, nextBoxSnapY);
             }
+
+            resizePropertyInterface();
             
             settingValues = false;
         }
@@ -2983,49 +2970,9 @@ namespace SM64DSe
             {
                 if (m_SelectedObject.HasPosition())
                 {
-                    FocusCamera(m_SelectedObject.Position);
+                    FocusCamera(m_SelectedObject.Position, m_SelectedObject.YRotation);
                 }
             }
-        }
-
-        private void btnToogleCollapsePosition_Click(object sender, EventArgs e)
-        {
-            int storedValue = box_position.Height;
-            box_position.Height = box_position_NextHeight;
-            box_position_NextHeight = storedValue;
-            initializePropertyInterface();
-        }
-
-        private void btnToogleCollapseRotation_Click(object sender, EventArgs e)
-        {
-            int storedValue = box_rotation.Height;
-            box_rotation.Height = box_rotation_NextHeight;
-            box_rotation_NextHeight = storedValue;
-            initializePropertyInterface();
-        }
-
-        private void btnToogleCollapseColor_Click(object sender, EventArgs e)
-        {
-            int storedValue = box_fogSettings.Height;
-            box_fogSettings.Height = box_fogSettings_NextHeight;
-            box_fogSettings_NextHeight = storedValue;
-            initializePropertyInterface();
-        }
-
-        private void btnToogleCollapseParameters_Click(object sender, EventArgs e)
-        {
-            int storedValue = box_parameters.Height;
-            box_parameters.Height = box_parameters_NextHeight;
-            box_parameters_NextHeight = storedValue;
-            initializePropertyInterface();
-        }
-
-        private void btnToogleCollapseGeneral_Click(object sender, EventArgs e)
-        {
-            int storedValue = box_general.Height;
-            box_general.Height = box_general_NextHeight;
-            box_general_NextHeight = storedValue;
-            initializePropertyInterface();
         }
 
         private void btnOpenObjectList_Click(object sender, EventArgs e)
@@ -3034,14 +2981,18 @@ namespace SM64DSe
             DialogResult result = dlg.ShowDialog(this);
             if (result == DialogResult.OK)
             {
-                val_objectId.Value = dlg.ObjectID;
+                ConvertLevelObject(dlg.ObjectID);
             }
+        }
+        
+        private void btnOpenDisplayOptions_Click(object sender, EventArgs e)
+        {
+            new LevelDisplaySettingsForm(this).Show(this);
         }
 
         private void btnOpenRawEditor_Click(object sender, EventArgs e)
         {
-            if (m_rawEditor==null)
-                m_rawEditor = new RawEditorForm(this);
+            if (m_rawEditor == null) m_rawEditor = new RawEditorForm(this);
             m_rawEditor.ShowForObject(m_SelectedObject);
         }
 
@@ -3065,7 +3016,7 @@ namespace SM64DSe
             m_LastClicked = obj.m_UniqueID;
 
             UpdateObjectForRawEditor();
-            initializePropertyInterface();
+            InitializePropertyInterface();
 
             if (obj.m_Properties.Properties.IndexOf("X position") != -1)
             {
@@ -3076,26 +3027,35 @@ namespace SM64DSe
             RefreshObjects(obj.m_Layer);
         }
 
-        public Decimal Wrap(float a, float b)
+        public decimal Wrap(float a, float b)
         {
-            return (Decimal)(a - b * Math.Floor(a / b));
-
+            return (decimal)(a - b * Math.Floor(a / b));
         }
 
-        public ushort ExtractBits(object value, int offset, int size)
+        public ushort ExtractBitsFromLeft(ushort value, int offset, int size)
         {
-            String bitString = Convert.ToString(Convert.ToUInt16(value), 2).PadLeft(16,'0');
-            String extractedBits = bitString.Substring(offset, size);
-            return Convert.ToUInt16(extractedBits, 2);
+            int bit = 15 - offset;
+            ushort extractValueMask = (ushort)((ushort)((1 << (bit + 1)) - 1) - (ushort)((1 << ((15 - (offset + size)) + 1)) - 1));
+            return (ushort)((value & extractValueMask) >> ((15 - (offset + size)) + 1));
         }
 
-        public ushort InsertBits(object value, object insertValue, int offset, int size)
+        public ushort InsertBitsFromLeft(ushort value, ushort insertValue, int offset, int size)
         {
-            String bitString = Convert.ToString(Convert.ToUInt16(value), 2).PadLeft(16, '0');
-            String newBitString = bitString.Remove(offset, size);
-            String insertString = Convert.ToString(Convert.ToUInt16(insertValue) & (ushort)Math.Pow(2, size) - 1, 2).PadLeft(size, '0');
-            newBitString = newBitString.Insert(offset, insertString);
-            return Convert.ToUInt16(newBitString, 2);
+            int bit = 15 - offset;
+            ushort insertValueMask = (ushort)((ushort)((1 << (bit + 1)) - 1) - (ushort)((1 << ((15 - (offset + size)) + 1)) - 1));
+            ushort valueMask = (ushort)(0xFFFF ^ insertValueMask);
+            return (ushort)((value & valueMask) | ((insertValue << ((15 - (offset + size)) + 1))) & insertValueMask);
+        }
+
+        private void btnFogColour_Click(object sender, EventArgs e)
+        {
+            Color? colour = btnFogColour.SelectColour();
+            if (colour.HasValue)
+            {
+                SetProperty("RGB R Value", (ushort)colour.Value.R);
+                SetProperty("RGB G Value", (ushort)colour.Value.G);
+                SetProperty("RGB B Value", (ushort)colour.Value.B);
+            }
         }
     }
 }
